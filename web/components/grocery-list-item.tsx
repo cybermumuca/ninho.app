@@ -1,9 +1,11 @@
+"use client";
+
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface GroceryListItemProps {
   id: string;
@@ -27,16 +29,29 @@ export function GroceryListItem({
   createdBy,
 }: GroceryListItemProps) {
   const timeAgo = getRelativeTime(createdAt);
+  const router = useRouter();
 
   return (
-    <Card className="py-5 gap-2 rounded-lg">
+    <Card 
+      className="py-5 gap-2 rounded-lg cursor-pointer transition-shadow group-hover:shadow-lg"
+      onClick={() => router.push(`/grocery-lists/${id}`)}
+      tabIndex={0}
+      role="button"
+    >
       <CardHeader className="flex items-center justify-between">
         <CardTitle className="text-lg">{name}</CardTitle>
-        <Link href={`/grocery-list/${id}/options`} className="cursor-pointer">
-          <Button className="rounded-md p-2 -m-2" variant="ghost" size="icon">
-            <Menu className="h-4 w-4" />
-          </Button>
-        </Link>
+        <Button
+          className="rounded-md p-2 -m-2 cursor-pointer"
+          variant="ghost"
+          size="icon"
+          onClick={e => {
+            e.stopPropagation();
+            router.push(`/grocery-lists/${id}/options`);
+          }}
+          tabIndex={0}
+        >
+          <Menu className="h-4 w-4" />
+        </Button>
       </CardHeader>
       <CardContent className="flex flex-col gap-2">
         <div className="flex items-center gap-2">

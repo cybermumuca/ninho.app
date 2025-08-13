@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description: "Veja e gerencie suas listas de compras.",
 };
 
-export default function GroceryListPage() {
+export default function GroceryListsPage() {
   return (
     <div className="min-h-dvh">
       <header>

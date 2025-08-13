@@ -1,18 +1,18 @@
 "use client"
 
 import { Button } from "@/components/ui/button";
-import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
+import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { mockGroceriesList } from "@/data/groceries";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { PencilIcon, Trash2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-interface ResponsiveGroceryOptionsOverlayProps {
+interface ResponsiveGroceryListOptionsOverlayProps {
   groceryId: string;
 }
 
-export function ResponsiveGroceryOptionsOverlay({ groceryId }: ResponsiveGroceryOptionsOverlayProps) {
+export function ResponsiveGroceryListOptionsOverlay({ groceryId }: ResponsiveGroceryListOptionsOverlayProps) {
   const grocery = mockGroceriesList.find((list) => list.id === groceryId);
   const router = useRouter();
   const isMobile = useIsMobile();
