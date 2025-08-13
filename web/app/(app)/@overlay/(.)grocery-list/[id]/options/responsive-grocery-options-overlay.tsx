@@ -1,0 +1,55 @@
+"use client"
+
+import { Button } from "@/components/ui/button";
+import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { mockGroceriesList } from "@/data/groceries";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { Trash2Icon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
+interface ResponsiveGroceryOptionsOverlayProps {
+  groceryId: string;
+}
+
+export function ResponsiveGroceryOptionsOverlay({ groceryId }: ResponsiveGroceryOptionsOverlayProps) {
+  const grocery = mockGroceriesList.find((list) => list.id === groceryId);
+  const router = useRouter();
+  const isMobile = useIsMobile();
+
+  const content = (
+    <div className="p-4 space-y-4">
+      <Button className="w-full justify-start items-center" variant="outline" size="lg">
+        <Trash2Icon className="text-destructive" size={24} />
+        Excluir
+      </Button>
+    </div>
+  )
+
+  if (isMobile) {
+    return (
+      <Drawer open={true} onOpenChange={() => router.back()}>
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle>Gerenciar Lista de Compras</DrawerTitle>
+            <DrawerDescription>Gerencie as opções desta lista de compras</DrawerDescription>
+          </DrawerHeader>
+          {content}
+        </DrawerContent>
+      </Drawer>
+    );
+  }
+
+  return (
+    <Sheet open={true} onOpenChange={() => router.back()}>
+      <SheetContent>
+        <SheetHeader>
+          <SheetTitle>Opções</SheetTitle>
+          <SheetDescription>Gerencie as opções desta lista de compras.</SheetDescription>
+        </SheetHeader>
+        {content}
+      </SheetContent>
+    </Sheet>
+  );
+}
