@@ -5,9 +5,8 @@ import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, D
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { mockGroceriesList } from "@/data/groceries";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Trash2Icon } from "lucide-react";
+import { PencilIcon, Trash2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 
 interface ResponsiveGroceryOptionsOverlayProps {
   groceryId: string;
@@ -19,8 +18,12 @@ export function ResponsiveGroceryOptionsOverlay({ groceryId }: ResponsiveGrocery
   const isMobile = useIsMobile();
 
   const content = (
-    <div className="p-4 space-y-4">
+    <div className="p-4 space-y-3">
       <Button className="w-full justify-start items-center" variant="outline" size="lg">
+        <PencilIcon size={24} />
+        Renomear
+      </Button>
+      <Button className="w-full justify-start items-center text-destructive" variant="outline" size="lg">
         <Trash2Icon className="text-destructive" size={24} />
         Excluir
       </Button>
@@ -45,8 +48,8 @@ export function ResponsiveGroceryOptionsOverlay({ groceryId }: ResponsiveGrocery
     <Sheet open={true} onOpenChange={() => router.back()}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Opções</SheetTitle>
-          <SheetDescription>Gerencie as opções desta lista de compras.</SheetDescription>
+          <SheetTitle>Gerenciar Lista de Compras</SheetTitle>
+          <SheetDescription>Gerencie as opções desta lista de compras</SheetDescription>
         </SheetHeader>
         {content}
       </SheetContent>
