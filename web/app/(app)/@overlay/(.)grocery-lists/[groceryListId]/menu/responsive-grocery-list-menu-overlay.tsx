@@ -8,29 +8,37 @@ import { Switch } from "@/components/ui/switch";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ArrowDownAZIcon, ListChecksIcon, ListRestartIcon, ArrowDown01Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useGroceryListStore } from "@/stores/grocery-list-store";
 
 interface ResponsiveGroceryListMenuOverlayProps {
-  groceryId: string;
+  groceryListId: string;
 }
 
-type SortOption = "categoria" | "alfabeto";
-
-export function ResponsiveGroceryListMenuOverlay({ groceryId }: ResponsiveGroceryListMenuOverlayProps) {
+export function ResponsiveGroceryListMenuOverlay({ groceryListId }: ResponsiveGroceryListMenuOverlayProps) {
   const router = useRouter();
   const isMobile = useIsMobile();
 
-  const [showPrices, setShowPrices] = useState(false);
-  const [sortBy, setSortBy] = useState<SortOption>("categoria");
+  const {
+    showPrices,
+    sortBy,
+    setShowPrices,
+    setSortBy,
+    markAllItems,
+    unmarkAllItems,
+    resetCollapsedCategories
+  } = useGroceryListStore();
 
   function handleMarkAll() {
-    // TODO: Implementar marcar todos os itens
-    console.log("Marcar todos os itens");
+    markAllItems(groceryListId);
   }
 
   function handleUnmarkAll() {
-    // TODO: Implementar desmarcar todos os itens
-    console.log("Desmarcar todos os itens");
+    unmarkAllItems(groceryListId);
+  }
+
+  function handleSortChange(newSort: typeof sortBy) {
+    setSortBy(newSort);
+    resetCollapsedCategories();
   }
 
   const content = (
@@ -80,7 +88,7 @@ export function ResponsiveGroceryListMenuOverlay({ groceryId }: ResponsiveGrocer
           <Button
             variant={sortBy === "categoria" ? "default" : "outline"}
             className="justify-start"
-            onClick={() => setSortBy("categoria")}
+            onClick={() => handleSortChange("categoria")}
             size="lg"
           >
             <ArrowDown01Icon className="size-5" />
@@ -89,7 +97,7 @@ export function ResponsiveGroceryListMenuOverlay({ groceryId }: ResponsiveGrocer
           <Button
             variant={sortBy === "alfabeto" ? "default" : "outline"}
             className="justify-start"
-            onClick={() => setSortBy("alfabeto")}
+            onClick={() => handleSortChange("alfabeto")}
             size="lg"
           >
             <ArrowDownAZIcon className="size-5" />

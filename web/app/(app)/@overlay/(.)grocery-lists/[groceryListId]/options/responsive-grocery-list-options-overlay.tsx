@@ -9,11 +9,11 @@ import { PencilIcon, Trash2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface ResponsiveGroceryListOptionsOverlayProps {
-  groceryId: string;
+  groceryListId: string;
 }
 
-export function ResponsiveGroceryListOptionsOverlay({ groceryId }: ResponsiveGroceryListOptionsOverlayProps) {
-  const grocery = mockGroceriesList.find((list) => list.id === groceryId);
+export function ResponsiveGroceryListOptionsOverlay({ groceryListId }: ResponsiveGroceryListOptionsOverlayProps) {
+  const grocery = mockGroceriesList.find((list) => list.id === groceryListId);
   const router = useRouter();
   const isMobile = useIsMobile();
 
