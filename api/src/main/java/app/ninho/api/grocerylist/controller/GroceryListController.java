@@ -1,8 +1,6 @@
 package app.ninho.api.grocerylist.controller;
 
-import app.ninho.api.grocerylist.dto.CreateGroceryListRequest;
-import app.ninho.api.grocerylist.dto.ListActiveGroceryListsRequest;
-import app.ninho.api.grocerylist.dto.ListActiveGroceryListsResponse;
+import app.ninho.api.grocerylist.dto.*;
 import app.ninho.api.grocerylist.service.GroceryListService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -42,5 +40,17 @@ public class GroceryListController {
         groceryListService.createGroceryList(request, principal.getSubject());
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @GetMapping("/v1/grocery-lists/{id}")
+    public ResponseEntity<GetGroceryListResponse> getGroceryList(
+        @PathVariable("id") String groceryListId,
+        @AuthenticationPrincipal Jwt principal
+    ) {
+        var request = new GetGroceryListRequest(groceryListId);
+
+        var response = groceryListService.getGroceryList(request, principal.getSubject());
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

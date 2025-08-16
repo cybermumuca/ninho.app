@@ -27,7 +27,7 @@ public class GroceryList {
     @JoinColumn(name = "owner_id")
     private User owner;
 
-    @Column(name = "closed_At")
+    @Column(name = "closed_at")
     private Instant closedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -72,5 +72,21 @@ public class GroceryList {
 
     public void setOwner(User owner) {
         this.owner = owner;
+    }
+
+    public Set<GroceryListItem> getItems() {
+        return items;
+    }
+
+    public void setItems(Set<GroceryListItem> items) {
+        this.items = items;
+    }
+
+    public Instant getClosedAt() {
+        return closedAt;
+    }
+
+    public void setClosedAt(Instant closedAt) {
+        this.closedAt = closedAt;
     }
 }

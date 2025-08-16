@@ -5,9 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.repository.query.Param;
-import app.ninho.api.grocerylist.dto.ListActiveGroceryListsResponse;
 
-import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface GroceryListRepository extends JpaRepository<GroceryList, String> {
@@ -43,4 +42,16 @@ public interface GroceryListRepository extends JpaRepository<GroceryList, String
 //          CASE WHEN :sort = 'asc' THEN groceryList.createdAt END ASC
 //    """)
 //    List<ListActiveGroceryListsResponse> findAllActive(@Param("sort") String sort, @Param("completed") Boolean completed);
+
+    @Query("""
+        SELECT DISTINCT gl FROM GroceryList gl
+        LEFT JOIN FETCH gl.items gli
+        LEFT JOIN FETCH gli.category
+        LEFT JOIN FETCH gli.addedBy
+        LEFT JOIN FETCH gli.completedBy
+        LEFT JOIN FETCH gl.owner
+        LEFT JOIN FETCH gl.closedBy
+        WHERE gl.id = :id
+    """)
+    Optional<GroceryList> findByIdWithDetails(@Param("id") String id);
 }
