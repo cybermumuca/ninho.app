@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class AuthenticationService {
@@ -65,16 +64,16 @@ public class AuthenticationService {
 
         var now = Instant.now();
 
-        var scopes = user.getRoles()
+        var roles = user.getRoles()
                 .stream()
                 .map(Role::getName)
-                .collect(Collectors.joining(" "));
+                .toList();
 
         var claims = JwtClaimsSet.builder()
                 .subject(user.getId())
                 .issuedAt(now)
                 .expiresAt(now.plus(30, ChronoUnit.DAYS))
-                .claim("scope", scopes)
+                .claim("roles", roles)
                 .build();
 
         var accessToken = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
