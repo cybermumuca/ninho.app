@@ -58,6 +58,12 @@ public class User {
     @Column(name = "updated_at")
     private Instant updatedAt;
 
+    public User(String userId) {
+        this.id = userId;
+    }
+
+    public User() {}
+
     public String getId() {
         return id;
     }

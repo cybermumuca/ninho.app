@@ -20,15 +20,19 @@ public class GroceryList {
     @Column(name = "title")
     private String title;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<GroceryListItem> items;
-
-    @Column(name = "is_active")
-    private boolean isActive;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id")
     private User owner;
+
+    @Column(name = "closed_At")
+    private Instant closedAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "closed_by_id")
+    private User closedBy;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -37,4 +41,36 @@ public class GroceryList {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private Instant updatedAt;
+
+    public User getClosedBy() {
+        return closedBy;
+    }
+
+    public void setClosedBy(User closedBy) {
+        this.closedBy = closedBy;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
+    }
 }
