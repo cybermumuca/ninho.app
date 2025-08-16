@@ -5,51 +5,79 @@ import app.ninho.api.auth.domain.User;
 import app.ninho.api.auth.dto.SignInRequest;
 import app.ninho.api.auth.dto.SignInResponse;
 import app.ninho.api.auth.dto.SignUpRequest;
+import app.ninho.api.auth.repository.RoleRepository;
 import app.ninho.api.auth.repository.UserRepository;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class AuthenticationService {
 
+    private final RoleRepository roleRepository;
     private final UserRepository userRepository;
+    private final JwtEncoder jwtEncoder;
     private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
-    private final AuthenticationManager authenticationManager;
-
 
     public AuthenticationService(
+            RoleRepository roleRepository,
             UserRepository userRepository,
-            PasswordEncoder passwordEncoder,
-            JwtService jwtService,
-            AuthenticationManager authenticationManager
+            JwtEncoder jwtEncoder,
+            PasswordEncoder passwordEncoder
     ) {
+        this.roleRepository = roleRepository;
         this.userRepository = userRepository;
+        this.jwtEncoder = jwtEncoder;
         this.passwordEncoder = passwordEncoder;
-        this.jwtService = jwtService;
-        this.authenticationManager = authenticationManager;
     }
 
+    @Transactional
     public void signUp(SignUpRequest signUpRequest) {
+        var existingUser = userRepository.findByEmail(signUpRequest.email());
+
+        if (existingUser.isPresent()) {
+            throw new RuntimeException("User with this email already exists");
+        }
+
+        var userRole = roleRepository.findByName(Role.Values.USER.name());
+
         User user = new User();
         user.setFirstName(signUpRequest.firstName());
         user.setLastName(signUpRequest.lastName());
         user.setEmail(signUpRequest.email());
         user.setPassword(passwordEncoder.encode(signUpRequest.password()));
-        user.setRole(Role.USER);
+        user.setRoles(Set.of(userRole));
 
         userRepository.save(user);
     }
 
     public SignInResponse signIn(SignInRequest signInRequest) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(signInRequest.email(), signInRequest.password())
-        );
         var user = userRepository.findByEmail(signInRequest.email())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
-        var accessToken = jwtService.generateToken(user);
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        var now = Instant.now();
+
+        var scopes = user.getRoles()
+                .stream()
+                .map(Role::getName)
+                .collect(Collectors.joining(" "));
+
+        var claims = JwtClaimsSet.builder()
+                .subject(user.getId())
+                .issuedAt(now)
+                .expiresAt(now.plus(30, ChronoUnit.DAYS))
+                .claim("scope", scopes)
+                .build();
+
+        var accessToken = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
 
         return new SignInResponse(accessToken);
     }

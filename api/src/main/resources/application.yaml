@@ -15,6 +15,5 @@ spring:
             format_sql: true
 
 jwt:
-    secretKey: ${JWT_SECRET}
-    expiration: 3600000 # 1 hour in milliseconds
-    issuer: NinhoAPI
+  public-key: classpath:app.pub
+  private-Key: classpath:app.key
