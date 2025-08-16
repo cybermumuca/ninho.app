@@ -29,6 +29,9 @@ public class User {
     @Column(name = "password_hash")
     private String password;
 
+    @Column(name = "avatar")
+    private String avatar;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "users_roles",
@@ -36,7 +39,6 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles;
-
 
     @ManyToOne
     @JoinColumn(name = "accepted_by_id")
