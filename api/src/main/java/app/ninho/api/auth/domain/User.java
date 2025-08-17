@@ -44,11 +44,11 @@ public class User {
     @JoinColumn(name = "accepted_by_id")
     private User acceptedBy;
 
-    @OneToMany(mappedBy = "acceptedBy")
-    private Set<User> acceptedUsers = new HashSet<>();
-
     @Column(name = "accepted_at")
     private Instant acceptedAt;
+
+    @OneToMany(mappedBy = "acceptedBy")
+    private Set<User> acceptedUsers = new HashSet<>();
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

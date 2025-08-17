@@ -62,6 +62,10 @@ public class AuthenticationService {
         var user = userRepository.findByEmail(signInRequest.email())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        if (!user.isAccepted()) {
+            throw new RuntimeException("User is not accepted");
+        }
+
         var now = Instant.now();
 
         var roles = user.getRoles()
