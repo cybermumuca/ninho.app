@@ -5,6 +5,7 @@ import app.ninho.api.home.service.RoomsService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +22,7 @@ public class RoomsController {
     }
 
     @PostMapping("/v1/rooms")
+    @PreAuthorize("hasAuthority('room:create')")
     public ResponseEntity<Void> addRoom(
         @Valid @RequestBody AddRoomRequest request,
         @AuthenticationPrincipal Jwt principal
