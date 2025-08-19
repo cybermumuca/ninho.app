@@ -12,7 +12,14 @@ import {
   CalendarCheckIcon,
   CalendarClockIcon,
   TriangleAlertIcon,
-  CircleCheckBigIcon
+  CircleCheckBigIcon,
+  Car,
+  TreePine,
+  Gamepad2,
+  Briefcase,
+  Baby,
+  Shirt,
+  Book
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -29,6 +36,14 @@ const iconMap = {
   SOFA: Sofa,
   UTENSILS: UtensilsCrossed,
   BATH: Bath,
+  HOME: Home,
+  CAR: Car,
+  TREE: TreePine,
+  GAMEPAD: Gamepad2,
+  BRIEFCASE: Briefcase,
+  BABY: Baby,
+  SHIRT: Shirt,
+  BOOK: Book,
 };
 
 const colorMap = {
@@ -38,6 +53,8 @@ const colorMap = {
   purple: "bg-purple-700",
   yellow: "bg-yellow-700",
   orange: "bg-orange-700",
+  pink: "bg-pink-700",
+  indigo: "bg-indigo-700",
 };
 
 export function RoomListCard({ room }: RoomListCardProps) {

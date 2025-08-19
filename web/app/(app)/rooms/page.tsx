@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { CirclePlusIcon, Home, PlusCircle } from "lucide-react";
 import { RoomListCard } from "./room-list-card";
 import { mockRoomList } from "@/data/rooms";
+import Link from "next/link";
 
 export default function RoomsPage() {
   const hasRooms = mockRoomList.length > 0;
@@ -17,8 +18,11 @@ export default function RoomsPage() {
             className="rounded-md p-2 -m-2 cursor-pointer"
             variant="ghost"
             size="icon"
+            asChild
           >
-            <CirclePlusIcon className="size-5" />
+            <Link href="/rooms/add">
+              <CirclePlusIcon className="size-5" />
+            </Link>
           </Button>
         </div>
       </header>
@@ -38,9 +42,11 @@ export default function RoomsPage() {
             <p className="text-muted-foreground mb-6 max-w-md">
               Organize suas tarefas domésticas criando cômodos. Cada cômodo pode ter suas próprias tarefas e você pode acompanhar o progresso de cada um.
             </p>
-            <Button className="gap-2">
-              <PlusCircle className="size-4" />
-              Criar primeiro cômodo
+            <Button className="gap-2" asChild>
+              <Link href="/rooms/add">
+                <PlusCircle className="size-4" />
+                Criar primeiro cômodo
+              </Link>
             </Button>
           </div>
         )}
