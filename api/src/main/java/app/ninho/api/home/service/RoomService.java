@@ -13,12 +13,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class RoomsService {
+public class RoomService {
 
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
 
-    public RoomsService(RoomRepository roomRepository, UserRepository userRepository) {
+    public RoomService(RoomRepository roomRepository, UserRepository userRepository) {
         this.roomRepository = roomRepository;
         this.userRepository = userRepository;
     }
