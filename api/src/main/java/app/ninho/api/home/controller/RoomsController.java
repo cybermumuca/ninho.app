@@ -1,9 +1,6 @@
 package app.ninho.api.home.controller;
 
-import app.ninho.api.home.dto.AddRoomRequest;
-import app.ninho.api.home.dto.UpdateRoomHttpRequest;
-import app.ninho.api.home.dto.UpdateRoomRequest;
-import app.ninho.api.home.dto.UpdateRoomResponse;
+import app.ninho.api.home.dto.*;
 import app.ninho.api.home.service.RoomsService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -44,5 +41,18 @@ public class RoomsController {
         var response = roomsService.updateRoom(request, principal.getSubject());
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @DeleteMapping("/v1/rooms/{id}")
+    @PreAuthorize("hasAuthority('room:delete')")
+    public ResponseEntity<Void> deleteRoom(
+        @PathVariable("id") String roomId,
+        @AuthenticationPrincipal Jwt principal
+    ) {
+        var request = new DeleteRoomRequest(roomId);
+
+        roomsService.deleteRoom(request, principal.getSubject());
+
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

@@ -5,6 +5,7 @@ import app.ninho.api.auth.domain.User;
 import app.ninho.api.auth.repository.UserRepository;
 import app.ninho.api.home.domain.Room;
 import app.ninho.api.home.dto.AddRoomRequest;
+import app.ninho.api.home.dto.DeleteRoomRequest;
 import app.ninho.api.home.dto.UpdateRoomRequest;
 import app.ninho.api.home.dto.UpdateRoomResponse;
 import app.ninho.api.home.repository.RoomRepository;
@@ -76,5 +77,22 @@ public class RoomsService {
             room.getIcon(),
             room.getColor()
         );
+    }
+
+    @Transactional
+    public void deleteRoom(DeleteRoomRequest request, String principalId) {
+        var principal = userRepository.findById(principalId)
+            .orElseThrow(() -> new IllegalArgumentException("User not found: " + principalId));
+
+        var principalHasPermission = principal.checkScope(Scope.Values.ROOM_DELETE.name);
+
+        if (!principalHasPermission) {
+            throw new IllegalArgumentException("User does not have permission to delete rooms");
+        }
+
+        var room = roomRepository.findById(request.roomId())
+            .orElseThrow(() -> new IllegalArgumentException("Room not found: " + request.roomId()));
+
+        roomRepository.delete(room);
     }
 }
