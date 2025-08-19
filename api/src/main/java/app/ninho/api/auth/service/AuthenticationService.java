@@ -1,6 +1,7 @@
 package app.ninho.api.auth.service;
 
 import app.ninho.api.auth.domain.Role;
+import app.ninho.api.auth.domain.Scope;
 import app.ninho.api.auth.domain.User;
 import app.ninho.api.auth.dto.SignInRequest;
 import app.ninho.api.auth.dto.SignInResponse;
@@ -73,11 +74,17 @@ public class AuthenticationService {
                 .map(Role::getName)
                 .toList();
 
+        var scopes = user.getScopes()
+                .stream()
+                .map(Scope::getName)
+                .toList();
+
         var claims = JwtClaimsSet.builder()
                 .subject(user.getId())
                 .issuedAt(now)
                 .expiresAt(now.plus(30, ChronoUnit.DAYS))
                 .claim("roles", roles)
+                .claim("scopes", scopes)
                 .build();
 
         var accessToken = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();

@@ -34,11 +34,19 @@ public class User {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "users_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
+        name = "users_roles",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "users_scopes",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "scope_id")
+    )
+    private Set<Scope> scopes = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "accepted_by_id")
@@ -46,9 +54,6 @@ public class User {
 
     @Column(name = "accepted_at")
     private Instant acceptedAt;
-
-    @OneToMany(mappedBy = "acceptedBy")
-    private Set<User> acceptedUsers = new HashSet<>();
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -112,20 +117,20 @@ public class User {
         this.roles = roles;
     }
 
+    public Set<Scope> getScopes() {
+        return scopes;
+    }
+
+    public void setScopes(Set<Scope> scopes) {
+        this.scopes = scopes;
+    }
+
     public User getAcceptedBy() {
         return acceptedBy;
     }
 
     public void setAcceptedBy(User acceptedBy) {
         this.acceptedBy = acceptedBy;
-    }
-
-    public Set<User> getAcceptedUsers() {
-        return acceptedUsers;
-    }
-
-    public void setAcceptedUsers(Set<User> acceptedUsers) {
-        this.acceptedUsers = acceptedUsers;
     }
 
     public boolean isAccepted() {
