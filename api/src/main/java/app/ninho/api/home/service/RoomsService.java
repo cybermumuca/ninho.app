@@ -1,11 +1,15 @@
 package app.ninho.api.home.service;
 
+import app.ninho.api.auth.domain.Scope;
 import app.ninho.api.auth.domain.User;
 import app.ninho.api.auth.repository.UserRepository;
 import app.ninho.api.home.domain.Room;
 import app.ninho.api.home.dto.AddRoomRequest;
+import app.ninho.api.home.dto.UpdateRoomRequest;
+import app.ninho.api.home.dto.UpdateRoomResponse;
 import app.ninho.api.home.repository.RoomRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class RoomsService {
@@ -18,11 +22,12 @@ public class RoomsService {
         this.userRepository = userRepository;
     }
 
+    @Transactional
     public void addRoom(AddRoomRequest request, String principalId) {
         var principal = userRepository.findById(principalId)
             .orElseThrow(() -> new IllegalArgumentException("User not found: " + principalId));
 
-        var principalHasPermission = principal.getScopes().stream().anyMatch(scope -> scope.getName().equals("room:create"));
+        var principalHasPermission = principal.checkScope(Scope.Values.ROOM_CREATE.name);
 
         if (!principalHasPermission) {
             throw new IllegalArgumentException("User does not have permission to create rooms");
@@ -35,5 +40,41 @@ public class RoomsService {
         room.setCreatedBy(new User(principalId));
 
         roomRepository.save(room);
+    }
+
+    @Transactional
+    public UpdateRoomResponse updateRoom(UpdateRoomRequest request, String principalId) {
+        var principal = userRepository.findById(principalId)
+            .orElseThrow(() -> new IllegalArgumentException("User not found: " + principalId));
+
+        var principalHasPermission = principal.checkScope(Scope.Values.ROOM_UPDATE.name);
+
+        if (!principalHasPermission) {
+            throw new IllegalArgumentException("User does not have permission to update rooms");
+        }
+
+        var room = roomRepository.findById(request.roomId())
+            .orElseThrow(() -> new IllegalArgumentException("Room not found: " + request.roomId()));
+
+        if (request.name() != null) {
+            room.setName(request.name());
+        }
+
+        if (request.icon() != null) {
+            room.setIcon(request.icon());
+        }
+
+        if (request.color() != null) {
+            room.setColor(request.color());
+        }
+
+        roomRepository.save(room);
+
+        return new UpdateRoomResponse(
+            room.getId(),
+            room.getName(),
+            room.getIcon(),
+            room.getColor()
+        );
     }
 }

@@ -174,4 +174,8 @@ public class User {
         String lastInitial = (lastName != null && !lastName.isEmpty()) ? lastName.substring(0, 1).toUpperCase() : "";
         return firstInitial + lastInitial;
     }
+
+    public boolean checkScope(String scopeName) {
+        return scopes.stream().anyMatch(scope -> scope.getName().equals(scopeName));
+    }
 }
