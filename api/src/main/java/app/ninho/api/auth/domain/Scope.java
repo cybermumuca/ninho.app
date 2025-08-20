@@ -98,7 +98,9 @@ public class Scope {
         ROOM_READ("room:read", "Permissão para visualizar um cômodo específico"),
         ROOM_CREATE("room:create", "Permissão para criar um novo cômodo"),
         ROOM_UPDATE("room:update", "Permissão para editar um cômodo existente"),
-        ROOM_DELETE("room:delete", "Permissão para deletar um cômodo");
+        ROOM_DELETE("room:delete", "Permissão para deletar um cômodo"),
+
+        TAG_CREATE("tag:create", "Permissão para criar uma nova tag");
 
         public final String name;
         public final String description;
