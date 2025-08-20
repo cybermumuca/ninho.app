@@ -1,5 +1,6 @@
 package app.ninho.api.agenda.controller;
 
+import app.ninho.api.agenda.dto.DeleteTagRequest;
 import app.ninho.api.agenda.service.TagService;
 import app.ninho.api.agenda.dto.CreateTagHttpRequest;
 import app.ninho.api.agenda.dto.CreateTagRequest;
@@ -9,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,5 +40,18 @@ public class TagController {
         tagService.createTag(request);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @DeleteMapping("/v1/tags/{id}")
+    @PreAuthorize("hasAuthority('tag:delete')")
+    public ResponseEntity<Void> deleteTag(
+        @PathVariable("id") String tagId,
+        @AuthenticationPrincipal Jwt jwt
+    ) {
+        var request = new DeleteTagRequest(tagId, jwt.getSubject());
+
+        tagService.deleteTag(request);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
