@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { CirclePlusIcon, Search, Tag } from "lucide-react";
+import { CirclePlusIcon, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { mockListTags } from "@/data/tags";
@@ -69,7 +69,6 @@ export default function TagsPage() {
           </div>
         ) : (
           <div className="flex flex-col gap-6">
-            {/* Barra de pesquisa */}
             {mockListTags.length > 3 && (
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground size-4" />
@@ -82,7 +81,6 @@ export default function TagsPage() {
               </div>
             )}
 
-            {/* Lista de tags */}
             {sortedTags.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 text-center flex-1">
                 <div className="p-4 bg-muted rounded-full mb-4">
