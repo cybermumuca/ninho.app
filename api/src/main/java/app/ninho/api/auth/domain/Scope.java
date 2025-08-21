@@ -100,9 +100,13 @@ public class Scope {
         ROOM_UPDATE("room:update", "Permissão para editar um cômodo existente"),
         ROOM_DELETE("room:delete", "Permissão para deletar um cômodo"),
 
+        // Tag permissions
         TAG_CREATE("tag:create", "Permissão para criar uma nova tag"),
         TAG_UPDATE("tag:update", "Permissão para atualizar uma tag existente"),
-        TAG_DELETE("tag:delete", "Permissão para deletar uma tag existente");
+        TAG_DELETE("tag:delete", "Permissão para deletar uma tag existente"),
+
+        // Category permissions
+        CATEGORY_LIST("category:list", "Permissão para listar todas as categorias");
 
         public final String name;
         public final String description;
