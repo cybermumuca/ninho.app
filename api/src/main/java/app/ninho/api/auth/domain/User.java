@@ -48,7 +48,7 @@ public class User {
     )
     private Set<Scope> scopes = new HashSet<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accepted_by_id")
     private User acceptedBy;
 
