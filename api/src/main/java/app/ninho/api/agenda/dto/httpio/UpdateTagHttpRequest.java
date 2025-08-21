@@ -1,4 +1,4 @@
-package app.ninho.api.agenda.dto;
+package app.ninho.api.agenda.dto.httpio;
 
 public record UpdateTagHttpRequest(
     String name,

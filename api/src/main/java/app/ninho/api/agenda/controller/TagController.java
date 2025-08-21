@@ -1,6 +1,10 @@
 package app.ninho.api.agenda.controller;
 
-import app.ninho.api.agenda.dto.*;
+import app.ninho.api.agenda.dto.httpio.CreateTagHttpRequest;
+import app.ninho.api.agenda.dto.httpio.UpdateTagHttpRequest;
+import app.ninho.api.agenda.dto.io.CreateTagRequest;
+import app.ninho.api.agenda.dto.io.DeleteTagRequest;
+import app.ninho.api.agenda.dto.io.UpdateTagRequest;
 import app.ninho.api.agenda.service.TagService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

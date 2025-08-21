@@ -1,4 +1,4 @@
-package app.ninho.api.home.dto;
+package app.ninho.api.home.dto.io;
 
 import jakarta.validation.constraints.NotBlank;
 

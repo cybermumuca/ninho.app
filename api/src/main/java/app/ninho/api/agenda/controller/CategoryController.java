@@ -1,6 +1,7 @@
 package app.ninho.api.agenda.controller;
 
-import app.ninho.api.agenda.dto.*;
+import app.ninho.api.agenda.dto.httpio.CreateCategoryHttpRequest;
+import app.ninho.api.agenda.dto.io.*;
 import app.ninho.api.agenda.service.CategoryService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

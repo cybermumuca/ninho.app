@@ -1,6 +1,10 @@
 package app.ninho.api.home.controller;
 
-import app.ninho.api.home.dto.*;
+import app.ninho.api.home.dto.httpio.UpdateRoomHttpRequest;
+import app.ninho.api.home.dto.io.AddRoomRequest;
+import app.ninho.api.home.dto.io.DeleteRoomRequest;
+import app.ninho.api.home.dto.io.UpdateRoomRequest;
+import app.ninho.api.home.dto.io.UpdateRoomResponse;
 import app.ninho.api.home.service.RoomService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

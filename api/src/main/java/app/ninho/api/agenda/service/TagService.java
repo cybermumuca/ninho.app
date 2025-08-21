@@ -1,9 +1,9 @@
 package app.ninho.api.agenda.service;
 
 import app.ninho.api.agenda.domain.Tag;
-import app.ninho.api.agenda.dto.CreateTagRequest;
-import app.ninho.api.agenda.dto.DeleteTagRequest;
-import app.ninho.api.agenda.dto.UpdateTagRequest;
+import app.ninho.api.agenda.dto.io.CreateTagRequest;
+import app.ninho.api.agenda.dto.io.DeleteTagRequest;
+import app.ninho.api.agenda.dto.io.UpdateTagRequest;
 import app.ninho.api.agenda.repository.TagRepository;
 import app.ninho.api.auth.domain.Scope;
 import app.ninho.api.auth.repository.UserRepository;

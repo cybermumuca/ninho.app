@@ -1,7 +1,7 @@
 package app.ninho.api.agenda.service;
 
 import app.ninho.api.agenda.domain.Category;
-import app.ninho.api.agenda.dto.*;
+import app.ninho.api.agenda.dto.io.*;
 import app.ninho.api.agenda.repository.CategoryRepository;
 import app.ninho.api.auth.domain.Scope;
 import app.ninho.api.auth.repository.UserRepository;
