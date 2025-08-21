@@ -100,4 +100,21 @@ public class CategoryController {
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
+    @PatchMapping("/v1/categories/{id}/restore")
+    @PreAuthorize("hasAuthority('category:update')")
+    public ResponseEntity<Void> restoreCategory(
+        @PathVariable("id") String categoryId,
+        @AuthenticationPrincipal Jwt jwt
+    ) {
+        var request = new RestoreCategoryRequest(
+            categoryId,
+            jwt.getSubject()
+        );
+
+        categoryService.restoreCategory(request);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
 }
