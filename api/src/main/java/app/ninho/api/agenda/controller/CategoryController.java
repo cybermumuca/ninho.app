@@ -1,6 +1,7 @@
 package app.ninho.api.agenda.controller;
 
 import app.ninho.api.agenda.dto.httpio.CreateCategoryHttpRequest;
+import app.ninho.api.agenda.dto.httpio.UpdateCategoryHttpRequest;
 import app.ninho.api.agenda.dto.io.*;
 import app.ninho.api.agenda.service.CategoryService;
 import jakarta.validation.Valid;
@@ -9,10 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -65,5 +63,25 @@ public class CategoryController {
         categoryService.createCategory(request);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PutMapping("/v1/categories/{id}")
+    @PreAuthorize("hasAuthority('category:update')")
+    public ResponseEntity<Void> updateCategory(
+        @PathVariable("id") String categoryId,
+        @Valid @RequestBody UpdateCategoryHttpRequest httpRequest,
+        @AuthenticationPrincipal Jwt jwt
+    ) {
+        var request = new UpdateCategoryRequest(
+            categoryId,
+            httpRequest.name(),
+            httpRequest.color(),
+            httpRequest.icon(),
+            jwt.getSubject()
+        );
+
+        categoryService.updateCategory(request);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
