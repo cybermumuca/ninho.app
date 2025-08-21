@@ -1,9 +1,7 @@
 package app.ninho.api.agenda.service;
 
-import app.ninho.api.agenda.dto.ListActiveCategoriesRequest;
-import app.ninho.api.agenda.dto.ListActiveCategoriesResponse;
-import app.ninho.api.agenda.dto.ListArchivedCategoriesRequest;
-import app.ninho.api.agenda.dto.ListArchivedCategoriesResponse;
+import app.ninho.api.agenda.domain.Category;
+import app.ninho.api.agenda.dto.*;
 import app.ninho.api.agenda.repository.CategoryRepository;
 import app.ninho.api.auth.domain.Scope;
 import app.ninho.api.auth.repository.UserRepository;
@@ -69,5 +67,27 @@ public class CategoryService {
                 category.getArchivedAt()
             ))
             .toList();
+    }
+
+
+    @Transactional
+    public void createCategory(CreateCategoryRequest request) {
+        var principal = userRepository.findById(request.principalId())
+            .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        var principalHasPermission = principal.checkScope(Scope.Values.CATEGORY_CREATE.name);
+
+        if (!principalHasPermission) {
+            throw new IllegalArgumentException("User does not have permission to create categories");
+        }
+
+        var category = new Category();
+
+        category.setName(request.name());
+        category.setColor(request.color());
+        category.setIcon(request.icon());
+        category.setOwner(principal);
+
+        categoryRepository.save(category);
     }
 }

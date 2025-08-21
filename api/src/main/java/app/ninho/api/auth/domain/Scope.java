@@ -106,7 +106,8 @@ public class Scope {
         TAG_DELETE("tag:delete", "Permissão para deletar uma tag existente"),
 
         // Category permissions
-        CATEGORY_LIST("category:list", "Permissão para listar todas as categorias");
+        CATEGORY_LIST("category:list", "Permissão para listar todas as categorias"),
+        CATEGORY_CREATE("category:create", "Permissão para criar uma nova categoria");
 
         public final String name;
         public final String description;
