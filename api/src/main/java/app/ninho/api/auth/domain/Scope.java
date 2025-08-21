@@ -107,8 +107,10 @@ public class Scope {
 
         // Category permissions
         CATEGORY_LIST("category:list", "Permissão para listar todas as categorias"),
+        CATEGORY_READ("category:read", "Permissão para visualizar detalhes de uma categoria específica"),
+        CATEGORY_CREATE("category:create", "Permissão para criar uma nova categoria"),
         CATEGORY_UPDATE("category:update", "Permissão para atualizar uma categoria existente"),
-        CATEGORY_CREATE("category:create", "Permissão para criar uma nova categoria");
+        CATEGORY_DELETE("category:delete", "Permissão para deletar uma categoria existente");
 
         public final String name;
         public final String description;

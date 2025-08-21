@@ -181,4 +181,29 @@ public class CategoryService {
 
         categoryRepository.save(category);
     }
+
+    @Transactional
+    public void deleteCategory(DeleteCategoryRequest request) {
+        var principal = userRepository.findById(request.principalId())
+            .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        var principalHasPermission = principal.checkScope(Scope.Values.CATEGORY_DELETE.name);
+
+        if (!principalHasPermission) {
+            throw new IllegalArgumentException("User does not have permission to delete categories");
+        }
+
+        var category = categoryRepository.findById(request.categoryId())
+            .orElseThrow(() -> new IllegalArgumentException("Category not found"));
+
+        if (!category.getOwner().getId().equals(principal.getId())) {
+            throw new IllegalArgumentException("User does not own this category");
+        }
+
+        if (category.getArchivedAt() == null) {
+            throw new IllegalArgumentException("Category is not archived");
+        }
+
+        categoryRepository.deleteById(request.categoryId());
+    }
 }

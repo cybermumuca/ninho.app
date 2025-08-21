@@ -117,4 +117,19 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    @DeleteMapping("/v1/categories/{id}")
+    @PreAuthorize("hasAuthority('category:delete')")
+    public ResponseEntity<Void> deleteCategory(
+        @PathVariable("id") String categoryId,
+        @AuthenticationPrincipal Jwt jwt
+    ) {
+        var request = new DeleteCategoryRequest(
+            categoryId,
+            jwt.getSubject()
+        );
+
+        categoryService.deleteCategory(request);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 }
