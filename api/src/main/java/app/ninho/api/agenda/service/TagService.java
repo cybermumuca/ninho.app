@@ -3,6 +3,7 @@ package app.ninho.api.agenda.service;
 import app.ninho.api.agenda.domain.Tag;
 import app.ninho.api.agenda.dto.CreateTagRequest;
 import app.ninho.api.agenda.dto.DeleteTagRequest;
+import app.ninho.api.agenda.dto.UpdateTagRequest;
 import app.ninho.api.agenda.repository.TagRepository;
 import app.ninho.api.auth.domain.Scope;
 import app.ninho.api.auth.repository.UserRepository;
@@ -59,5 +60,34 @@ public class TagService {
         }
 
         tagRepository.deleteById(request.tagId());
+    }
+
+    @Transactional
+    public void updateTag(UpdateTagRequest request) {
+        var principal = userRepository.findById(request.principalId())
+            .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        var principalHasPermission = principal.checkScope(Scope.Values.TAG_UPDATE.name);
+
+        if (!principalHasPermission) {
+            throw new IllegalArgumentException("User does not have permission to update tags");
+        }
+
+        var tag = tagRepository.findById(request.tagId())
+            .orElseThrow(() -> new IllegalArgumentException("Tag not found"));
+
+        if (!tag.getOwner().getId().equals(request.principalId())) {
+            throw new IllegalArgumentException("User does not have permission to update this tag");
+        }
+
+        if (request.name() != null) {
+            tag.setName(request.name());
+        }
+
+        if (request.color() != null) {
+            tag.setColor(request.color());
+        }
+
+        tagRepository.save(tag);
     }
 }
