@@ -2,6 +2,8 @@ package app.ninho.api.agenda.controller;
 
 import app.ninho.api.agenda.dto.ListActiveCategoriesRequest;
 import app.ninho.api.agenda.dto.ListActiveCategoriesResponse;
+import app.ninho.api.agenda.dto.ListArchivedCategoriesRequest;
+import app.ninho.api.agenda.dto.ListArchivedCategoriesResponse;
 import app.ninho.api.agenda.service.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +32,18 @@ public class CategoryController {
         var request = new ListActiveCategoriesRequest(jwt.getSubject());
 
         var response = categoryService.listActiveCategories(request);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("/v1/categories/archived")
+    @PreAuthorize("hasAuthority('category:list')")
+    public ResponseEntity<List<ListArchivedCategoriesResponse>> listArchivedCategories(
+        @AuthenticationPrincipal Jwt jwt
+    ) {
+        var request = new ListArchivedCategoriesRequest(jwt.getSubject());
+
+        var response = categoryService.listArchivedCategories(request);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

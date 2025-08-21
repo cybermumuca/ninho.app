@@ -2,6 +2,8 @@ package app.ninho.api.agenda.service;
 
 import app.ninho.api.agenda.dto.ListActiveCategoriesRequest;
 import app.ninho.api.agenda.dto.ListActiveCategoriesResponse;
+import app.ninho.api.agenda.dto.ListArchivedCategoriesRequest;
+import app.ninho.api.agenda.dto.ListArchivedCategoriesResponse;
 import app.ninho.api.agenda.repository.CategoryRepository;
 import app.ninho.api.auth.domain.Scope;
 import app.ninho.api.auth.repository.UserRepository;
@@ -40,6 +42,31 @@ public class CategoryService {
                 category.getColor(),
                 category.getIcon(),
                 0 // TODO: WIP Implement count of events in category
+            ))
+            .toList();
+    }
+
+    @Transactional
+    public List<ListArchivedCategoriesResponse> listArchivedCategories(ListArchivedCategoriesRequest request) {
+        var principal = userRepository.findById(request.principalId())
+            .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        var principalHasPermission = principal.checkScope(Scope.Values.CATEGORY_LIST.name);
+
+        if (!principalHasPermission) {
+            throw new IllegalArgumentException("User does not have permission to list categories");
+        }
+
+        return categoryRepository.findAllByOwnerIdAndArchivedAtIsNotNull(request.principalId())
+            .stream()
+            .map(category -> new ListArchivedCategoriesResponse(
+                category.getId(),
+                category.getName(),
+                category.getColor(),
+                category.getIcon(),
+                0, // TODO: WIP Implement count of events in category
+                category.getCreatedAt(),
+                category.getArchivedAt()
             ))
             .toList();
     }

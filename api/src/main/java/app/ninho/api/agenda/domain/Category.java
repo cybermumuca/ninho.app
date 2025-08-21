@@ -80,6 +80,14 @@ public class Category {
         this.owner = owner;
     }
 
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
+    }
+
     public Instant getArchivedAt() {
         return archivedAt;
     }
@@ -87,4 +95,6 @@ public class Category {
     public void setArchivedAt(Instant archivedAt) {
         this.archivedAt = archivedAt;
     }
+
+
 }

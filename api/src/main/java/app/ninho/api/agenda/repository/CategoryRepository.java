@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, String> {
     List<Category> findAllByOwnerIdAndArchivedAtIsNull(String ownerId);
+    List<Category> findAllByOwnerIdAndArchivedAtIsNotNull(String ownerId);
 }
