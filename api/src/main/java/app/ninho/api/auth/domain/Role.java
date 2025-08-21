@@ -10,7 +10,7 @@ public class Role {
     @Column(name = "id")
     private String id;
 
-    @Column(name = "name")
+    @Column(name = "name", unique = true, nullable = false)
     private String name;
 
     public Role(String name) {

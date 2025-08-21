@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 
 @Configuration
 public class AdminSeed implements CommandLineRunner {
@@ -38,37 +37,41 @@ public class AdminSeed implements CommandLineRunner {
     @Transactional
     public void run(String... args) {
         // Seed roles
-        roleRepository.saveAll(List.of(new Role("ADMIN"), new Role("USER")));
-
-        // Seed scopes
-        List<Scope> scopes = Arrays.stream(Scope.Values.values())
-                .map(scopeValue -> new Scope(scopeValue.name, scopeValue.description))
-                .toList();
-        
-        for (Scope scope : scopes) {
-            scopeRepository.findByName(scope.getName())
-                    .ifPresentOrElse(
-                            existingScope -> System.out.println("Scope " + scope.getName() + " already exists"),
-                            () -> scopeRepository.save(scope)
-                    );
-        }
-
-        var userAdmin = userRepository.findByEmail("admin@email.com");
-
-        userAdmin.ifPresentOrElse(
-                user -> {
-                    System.out.println("Admin user already exists");
-                },
-                () -> {
-                    var user = new User();
-
-                    user.setFirstName("admin");
-                    user.setLastName("lastname");
-                    user.setEmail("admin@email.com");
-                    user.setPassword(passwordEncoder.encode("12345678Aa!"));
-                    user.setRoles(new HashSet<>(roleRepository.findAll()));
-                    userRepository.save(user);
+        Arrays.stream(Role.Values.values())
+            .forEach(role -> {
+                var roleInDB = roleRepository.findByName(role.name());
+                if (roleInDB == null) {
+                    roleRepository.save(new Role(role.name()));
                 }
-        );
+            });
+
+        System.out.println("Seeding scopes...");
+
+        Arrays.stream(Scope.Values.values())
+            .forEach(scope ->
+                scopeRepository.findByName(scope.name)
+                    .orElseGet(() -> scopeRepository.save(new Scope(scope.name, scope.description)))
+            );
+
+        System.out.println("Seeding admin user...");
+        var allRoles = new HashSet<>(roleRepository.findAll());
+        var allScopes = new HashSet<>(scopeRepository.findAll());
+        var adminOpt = userRepository.findByEmail("admin@email.com");
+
+        if (adminOpt.isPresent()) {
+            var admin = adminOpt.get();
+            admin.setRoles(allRoles);
+            admin.setScopes(allScopes);
+            userRepository.save(admin);
+        } else {
+            var user = new User();
+            user.setFirstName("admin");
+            user.setLastName("lastname");
+            user.setEmail("admin@email.com");
+            user.setPassword(passwordEncoder.encode("12345678Aa!"));
+            user.setRoles(allRoles);
+            user.setScopes(allScopes);
+            userRepository.save(user);
+        }
     }
 }
