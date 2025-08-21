@@ -1,6 +1,7 @@
 package app.ninho.api.grocerylist.controller;
 
-import app.ninho.api.grocerylist.dto.*;
+import app.ninho.api.grocerylist.dto.httpio.CreateGroceryListHttpRequest;
+import app.ninho.api.grocerylist.dto.io.*;
 import app.ninho.api.grocerylist.service.GroceryListService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -28,8 +29,13 @@ public class GroceryListController {
         @RequestParam(required = false) Boolean completed,
         @AuthenticationPrincipal Jwt principal
     ) {
-        var request = new ListActiveGroceryListsRequest(sort, completed);
-        var result = groceryListService.listActiveGroceryLists(request, principal.getSubject());
+        var request = new ListActiveGroceryListsRequest(
+            sort,
+            completed,
+            principal.getSubject()
+        );
+
+        var result = groceryListService.listActiveGroceryLists(request);
 
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
@@ -37,10 +43,15 @@ public class GroceryListController {
     @PostMapping("/v1/grocery-lists")
     @PreAuthorize("hasAuthority('grocery_list:create')")
     public ResponseEntity<Void> createGroceryList(
-        @Valid @RequestBody CreateGroceryListRequest request,
+        @Valid @RequestBody CreateGroceryListHttpRequest httpRequest,
         @AuthenticationPrincipal Jwt principal
     ) {
-        groceryListService.createGroceryList(request, principal.getSubject());
+        var request = new CreateGroceryListRequest(
+            httpRequest.title(),
+            principal.getSubject()
+        );
+
+        groceryListService.createGroceryList(request);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -51,9 +62,9 @@ public class GroceryListController {
         @PathVariable("id") String groceryListId,
         @AuthenticationPrincipal Jwt principal
     ) {
-        var request = new GetGroceryListRequest(groceryListId);
+        var request = new GetGroceryListRequest(groceryListId, principal.getSubject());
 
-        var response = groceryListService.getGroceryList(request, principal.getSubject());
+        var response = groceryListService.getGroceryList(request);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

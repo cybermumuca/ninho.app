@@ -1,4 +1,4 @@
-package app.ninho.api.grocerylist.dto;
+package app.ninho.api.grocerylist.dto.io;
 
 import java.math.BigDecimal;
 import java.time.Instant;

@@ -12,12 +12,12 @@ import java.util.Optional;
 public interface GroceryListRepository extends JpaRepository<GroceryList, String> {
 
 //    @Query("""
-//        SELECT new app.ninho.api.grocerylist.dto.ListActiveGroceryListsResponse(
+//        SELECT new app.ninho.api.grocerylist.dto.io.ListActiveGroceryListsResponse(
 //            groceryList.id,
 //            groceryList.title,
 //            SUM(CASE WHEN item.completedAt IS NOT NULL THEN 1 ELSE 0 END),
 //            COUNT(groceryList),
-//            new app.ninho.api.grocerylist.dto.ListActiveGroceryListsResponse.CreatedBy(
+//            new app.ninho.api.grocerylist.dto.io.ListActiveGroceryListsResponse.CreatedBy(
 //                owner.id, owner.firstName, owner.lastName, owner.avatar
 //            ),
 //            groceryList.createdAt

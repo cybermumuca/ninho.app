@@ -1,11 +1,13 @@
 package app.ninho.api.grocerylist.service;
 
+import app.ninho.api.auth.domain.Scope;
 import app.ninho.api.auth.domain.User;
+import app.ninho.api.auth.repository.UserRepository;
 import app.ninho.api.grocerylist.domain.GroceryList;
-import app.ninho.api.grocerylist.dto.*;
+import app.ninho.api.grocerylist.dto.io.*;
 import app.ninho.api.grocerylist.repository.GroceryListRepository;
-import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -13,23 +15,47 @@ import java.util.List;
 public class GroceryListService {
 
     private final GroceryListRepository groceryListRepository;
+    private final UserRepository userRepository;
 
-    public GroceryListService(GroceryListRepository groceryListRepository) {
+    public GroceryListService(GroceryListRepository groceryListRepository, UserRepository userRepository) {
+        this.userRepository = userRepository;
         this.groceryListRepository = groceryListRepository;
     }
 
-    public List<ListActiveGroceryListsResponse> listActiveGroceryLists(ListActiveGroceryListsRequest request, String principalId) {
-        return List.of();
+    public List<ListActiveGroceryListsResponse> listActiveGroceryLists(ListActiveGroceryListsRequest request) {
+        return List.of(); // TODO: WIP
     }
 
-    public void createGroceryList(CreateGroceryListRequest request, String principalId) {
+    @Transactional
+    public void createGroceryList(CreateGroceryListRequest request) {
+        var principal = userRepository.findById(request.principalId())
+            .orElseThrow(() -> new IllegalArgumentException("User not found: " + request.principalId()));
+
+        var principalHasPermission = principal.checkScope(Scope.Values.GROCERY_LIST_CREATE.name);
+
+        if (!principalHasPermission) {
+            throw new IllegalArgumentException("User does not have permission to create grocery lists");
+        }
+
         var groceryList = new GroceryList();
+
         groceryList.setTitle(request.title());
-        groceryList.setOwner(new User(principalId));
+        groceryList.setOwner(new User(request.principalId()));
+
         groceryListRepository.save(groceryList);
     }
 
-    public GetGroceryListResponse getGroceryList(GetGroceryListRequest request, String principalId) {
+    @Transactional
+    public GetGroceryListResponse getGroceryList(GetGroceryListRequest request) {
+        var principal = userRepository.findById(request.principalId())
+            .orElseThrow(() -> new IllegalArgumentException("User not found: " + request.principalId()));
+
+        var principalHasPermission = principal.checkScope(Scope.Values.GROCERY_LIST_ITEM_LIST.name);
+
+        if (!principalHasPermission) {
+            throw new IllegalArgumentException("User does not have permission to list grocery list items");
+        }
+
         var groceryList = groceryListRepository.findById(request.groceryListId())
                 .orElseThrow(() -> new IllegalArgumentException("Grocery list not found"));
 
@@ -56,7 +82,7 @@ public class GroceryListService {
                         item.getAddedBy().getAvatar(),
                         item.getAddedBy().getInitials()
                     ),
-                    item.getAddedBy().getId().equals(principalId),
+                    item.getAddedBy().getId().equals(request.principalId()),
                     item.getAddedAt(),
                     item.getCompletedBy() != null ? new GetGroceryListResponse.Colaborator(
                         item.getCompletedBy().getId(),
@@ -65,7 +91,7 @@ public class GroceryListService {
                         item.getCompletedBy().getAvatar(),
                         item.getCompletedBy().getInitials()
                     ) : null,
-                    item.getCompletedBy() != null && item.getCompletedBy().getId().equals(principalId),
+                    item.getCompletedBy() != null && item.getCompletedBy().getId().equals(request.principalId()),
                     item.getCompletedAt()
                 )).toList(),
             new GetGroceryListResponse.Colaborator(
@@ -75,7 +101,7 @@ public class GroceryListService {
                 groceryList.getOwner().getAvatar(),
                 groceryList.getOwner().getInitials()
             ),
-            groceryList.getOwner().getId().equals(principalId),
+            groceryList.getOwner().getId().equals(request.principalId()),
             groceryList.getClosedBy() != null ? new GetGroceryListResponse.Colaborator(
                 groceryList.getClosedBy().getId(),
                 groceryList.getClosedBy().getFirstName(),
@@ -83,7 +109,7 @@ public class GroceryListService {
                 groceryList.getClosedBy().getAvatar(),
                 groceryList.getClosedBy().getInitials()
             ) : null,
-            groceryList.getClosedBy() != null && groceryList.getClosedBy().getId().equals(principalId),
+            groceryList.getClosedBy() != null && groceryList.getClosedBy().getId().equals(request.principalId()),
             groceryList.getClosedAt()
         );
     }
