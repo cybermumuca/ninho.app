@@ -84,4 +84,20 @@ public class CategoryController {
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
+    @PatchMapping("/v1/categories/{id}/archive")
+    @PreAuthorize("hasAuthority('category:update')")
+    public ResponseEntity<Void> archiveCategory(
+        @PathVariable("id") String categoryId,
+        @AuthenticationPrincipal Jwt jwt
+    ) {
+        var request = new ArchiveCategoryRequest(
+            categoryId,
+            jwt.getSubject()
+        );
+
+        categoryService.archiveCategory(request);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 }
