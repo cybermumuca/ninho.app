@@ -4,5 +4,6 @@ public record UpdateRoomRequest(
     String roomId,
     String name,
     String icon,
-    String color
+    String color,
+    String principalId
 ) {}

@@ -1,5 +1,6 @@
 package app.ninho.api.home.controller;
 
+import app.ninho.api.home.dto.httpio.AddRoomHttpRequest;
 import app.ninho.api.home.dto.httpio.UpdateRoomHttpRequest;
 import app.ninho.api.home.dto.io.AddRoomRequest;
 import app.ninho.api.home.dto.io.DeleteRoomRequest;
@@ -26,10 +27,17 @@ public class RoomController {
     @PostMapping("/v1/rooms")
     @PreAuthorize("hasAuthority('room:create')")
     public ResponseEntity<Void> addRoom(
-        @Valid @RequestBody AddRoomRequest request,
+        @Valid @RequestBody AddRoomHttpRequest httpRequest,
         @AuthenticationPrincipal Jwt principal
     ) {
-        roomService.addRoom(request, principal.getSubject());
+        var request = new AddRoomRequest(
+            httpRequest.name(),
+            httpRequest.icon(),
+            httpRequest.color(),
+            principal.getSubject()
+        );
+
+        roomService.addRoom(request);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -41,8 +49,9 @@ public class RoomController {
         @Valid @RequestBody UpdateRoomHttpRequest httpRequest,
         @AuthenticationPrincipal Jwt principal
     ) {
-        var request = new UpdateRoomRequest(roomId, httpRequest.name(), httpRequest.icon(), httpRequest.color());
-        var response = roomService.updateRoom(request, principal.getSubject());
+        var request = new UpdateRoomRequest(roomId, httpRequest.name(), httpRequest.icon(), httpRequest.color(), principal.getSubject());
+
+        var response = roomService.updateRoom(request);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -53,9 +62,9 @@ public class RoomController {
         @PathVariable("id") String roomId,
         @AuthenticationPrincipal Jwt principal
     ) {
-        var request = new DeleteRoomRequest(roomId);
+        var request = new DeleteRoomRequest(roomId, principal.getSubject());
 
-        roomService.deleteRoom(request, principal.getSubject());
+        roomService.deleteRoom(request);
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }

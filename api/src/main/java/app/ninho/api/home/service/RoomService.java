@@ -24,9 +24,9 @@ public class RoomService {
     }
 
     @Transactional
-    public void addRoom(AddRoomRequest request, String principalId) {
-        var principal = userRepository.findById(principalId)
-            .orElseThrow(() -> new IllegalArgumentException("User not found: " + principalId));
+    public void addRoom(AddRoomRequest request) {
+        var principal = userRepository.findById(request.principalId())
+            .orElseThrow(() -> new IllegalArgumentException("User not found: " + request.principalId()));
 
         var principalHasPermission = principal.checkScope(Scope.Values.ROOM_CREATE.name);
 
@@ -38,15 +38,15 @@ public class RoomService {
         room.setName(request.name());
         room.setIcon(request.icon());
         room.setColor(request.color());
-        room.setCreatedBy(new User(principalId));
+        room.setCreatedBy(new User(request.principalId()));
 
         roomRepository.save(room);
     }
 
     @Transactional
-    public UpdateRoomResponse updateRoom(UpdateRoomRequest request, String principalId) {
-        var principal = userRepository.findById(principalId)
-            .orElseThrow(() -> new IllegalArgumentException("User not found: " + principalId));
+    public UpdateRoomResponse updateRoom(UpdateRoomRequest request) {
+        var principal = userRepository.findById(request.principalId())
+            .orElseThrow(() -> new IllegalArgumentException("User not found: " + request.principalId()));
 
         var principalHasPermission = principal.checkScope(Scope.Values.ROOM_UPDATE.name);
 
@@ -80,9 +80,9 @@ public class RoomService {
     }
 
     @Transactional
-    public void deleteRoom(DeleteRoomRequest request, String principalId) {
-        var principal = userRepository.findById(principalId)
-            .orElseThrow(() -> new IllegalArgumentException("User not found: " + principalId));
+    public void deleteRoom(DeleteRoomRequest request) {
+        var principal = userRepository.findById(request.principalId())
+            .orElseThrow(() -> new IllegalArgumentException("User not found: " + request.principalId()));
 
         var principalHasPermission = principal.checkScope(Scope.Values.ROOM_DELETE.name);
 
