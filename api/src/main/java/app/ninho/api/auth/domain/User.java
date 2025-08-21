@@ -134,7 +134,7 @@ public class User {
     }
 
     public boolean isAccepted() {
-        return this.acceptedBy != null;
+        return this.acceptedAt != null;
     }
 
     public Instant getAcceptedAt() {

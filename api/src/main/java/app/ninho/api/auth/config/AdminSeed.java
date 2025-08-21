@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -69,6 +70,7 @@ public class AdminSeed implements CommandLineRunner {
             user.setLastName("lastname");
             user.setEmail("admin@email.com");
             user.setPassword(passwordEncoder.encode("12345678Aa!"));
+            user.setAcceptedAt(Instant.now());
             user.setRoles(allRoles);
             user.setScopes(allScopes);
             userRepository.save(user);
