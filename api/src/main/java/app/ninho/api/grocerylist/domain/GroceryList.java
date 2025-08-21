@@ -20,7 +20,7 @@ public class GroceryList {
     @Column(name = "title")
     private String title;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "list", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<GroceryListItem> items;
 
     @ManyToOne(fetch = FetchType.LAZY)
