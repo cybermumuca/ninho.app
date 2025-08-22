@@ -20,6 +20,7 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.web.BearerTokenResolver;
 import org.springframework.security.web.SecurityFilterChain;
 
 import java.security.interfaces.RSAPrivateKey;
@@ -38,16 +39,26 @@ public class SecurityConfig {
     @Value("${jwt.private-key}")
     private RSAPrivateKey privateKey;
 
+    private final BearerTokenResolver tokenResolver;
+
+    public SecurityConfig(BearerTokenResolver tokenResolver) {
+        this.tokenResolver = tokenResolver;
+    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests(authorize -> authorize
-                                .requestMatchers("/v1/auth/**").permitAll()
-                                .anyRequest().authenticated()
-                )
-                .csrf(AbstractHttpConfigurer::disable)
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+            .authorizeHttpRequests(authorize ->
+                authorize
+                    .requestMatchers("/v1/auth/**").permitAll()
+                    .anyRequest().authenticated()
+            )
+            .csrf(AbstractHttpConfigurer::disable)
+            .oauth2ResourceServer(oauth2 -> oauth2
+                .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                .bearerTokenResolver(tokenResolver)
+            )
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();
     }
