@@ -3,8 +3,8 @@ package app.ninho.api.auth.service;
 import app.ninho.api.auth.domain.Role;
 import app.ninho.api.auth.domain.Scope;
 import app.ninho.api.auth.domain.User;
-import app.ninho.api.auth.dto.SignInRequest;
-import app.ninho.api.auth.dto.SignInResponse;
+import app.ninho.api.auth.dto.io.SignInRequest;
+import app.ninho.api.auth.dto.io.SignInResponse;
 import app.ninho.api.auth.dto.SignUpRequest;
 import app.ninho.api.auth.repository.RoleRepository;
 import app.ninho.api.auth.repository.UserRepository;
@@ -79,16 +79,18 @@ public class AuthenticationService {
                 .map(Scope::getName)
                 .toList();
 
+        var expiresAt = now.plus(30, ChronoUnit.DAYS);
+
         var claims = JwtClaimsSet.builder()
                 .subject(user.getId())
                 .issuedAt(now)
-                .expiresAt(now.plus(30, ChronoUnit.DAYS))
+                .expiresAt(expiresAt)
                 .claim("roles", roles)
                 .claim("scopes", scopes)
                 .build();
 
         var accessToken = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
 
-        return new SignInResponse(accessToken);
+        return new SignInResponse(accessToken, now, expiresAt);
     }
 }
