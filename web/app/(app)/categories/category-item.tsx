@@ -53,7 +53,7 @@ export function CategoryItem({ category }: CategoryItemProps) {
   return (
     <div 
       className="flex flex-col items-center p-2 hover:bg-muted rounded-xl"
-      onClick={() => router.push(`/categories/${category.id}`)}
+      onClick={() => router.push(`/categories/${category.id}/options`)}
       tabIndex={0}
     >
       <div className={`rounded-lg ${colorClass} flex items-center justify-center p-3 border-2`}>

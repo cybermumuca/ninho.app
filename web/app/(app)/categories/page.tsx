@@ -36,7 +36,7 @@ export default function CategoriesPage() {
       <main className="flex-1 container mx-auto px-4 py-4">
         {hasCategories ? (
           <div className="grid grid-cols-3 lg:grid-cols-11 gap-2">
-            {mockCategoryList.map((category) => (
+            {mockCategoryList.filter((category) => !category.archivedAt).map((category) => (
               <CategoryItem key={category.id} category={category} />
             ))}
           </div>
