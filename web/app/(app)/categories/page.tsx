@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { mockCategoryList } from "@/data/categories";
 import { cn } from "@/lib/utils";
-import { ChevronRightIcon, CirclePlusIcon, FolderIcon } from "lucide-react";
+import { ArchiveIcon, ChevronRightIcon, CirclePlusIcon, FolderIcon } from "lucide-react";
 import Link from "next/link";
 import { CategoryItem } from "./category-item";
 
@@ -21,6 +21,16 @@ export default function CategoriesPage() {
               }
             </p>
           </div>
+          <Button
+            className="rounded-md p-2 -m-2 cursor-pointer"
+            variant="ghost"
+            size="icon"
+            asChild
+          >
+            <Link href="/categories/archived">
+              <ArchiveIcon className="size-5" />
+            </Link>
+          </Button>
           <Button
             className="rounded-md p-2 -m-2 cursor-pointer"
             variant="ghost"
