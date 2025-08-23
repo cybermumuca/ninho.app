@@ -22,6 +22,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenResolver;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -40,14 +41,17 @@ public class SecurityConfig {
     private RSAPrivateKey privateKey;
 
     private final BearerTokenResolver tokenResolver;
+    private final CorsConfigurationSource corsConfigurationSource;
 
-    public SecurityConfig(BearerTokenResolver tokenResolver) {
+    public SecurityConfig(BearerTokenResolver tokenResolver, CorsConfigurationSource corsConfigurationSource) {
         this.tokenResolver = tokenResolver;
+        this.corsConfigurationSource = corsConfigurationSource;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+            .cors(cors -> cors.configurationSource(corsConfigurationSource))
             .authorizeHttpRequests(authorize ->
                 authorize
                     .requestMatchers("/v1/auth/**").permitAll()
@@ -83,10 +87,10 @@ public class SecurityConfig {
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+        
         converter.setJwtGrantedAuthoritiesConverter(jwt -> {
             Collection<GrantedAuthority> authorities = new ArrayList<>();
 
-            // Lê scopes sem prefixo
             Object scopes = jwt.getClaims().get("scopes");
             if (scopes instanceof Collection<?> s) {
                 authorities.addAll(s.stream()
@@ -95,7 +99,6 @@ public class SecurityConfig {
                         .toList());
             }
 
-            // Lê roles com prefixo ROLE_
             Object roles = jwt.getClaims().get("roles");
             if (roles instanceof Collection<?> r) {
                 authorities.addAll(r.stream()
@@ -106,6 +109,7 @@ public class SecurityConfig {
 
             return authorities;
         });
+
         return converter;
     }
 }

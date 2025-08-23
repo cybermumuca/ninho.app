@@ -1,5 +1,6 @@
 package app.ninho.api.auth.controller;
 
+import app.ninho.api.auth.dto.httpio.SignInHttpRequest;
 import app.ninho.api.auth.service.AuthenticationService;
 import app.ninho.api.auth.dto.io.SignInRequest;
 import app.ninho.api.auth.dto.SignUpRequest;
@@ -30,7 +31,9 @@ public class AuthenticationController {
     }
 
     @PostMapping("/v1/auth/sign-in")
-    public ResponseEntity<Void> signIn(@RequestBody SignInRequest request) {
+    public ResponseEntity<Void> signIn(@Valid @RequestBody SignInHttpRequest httpRequest) {
+        var request = new SignInRequest(httpRequest.email(), httpRequest.password());
+
         var response = authenticationService.signIn(request);
 
         long maxAgeSeconds = Duration.between(response.issuedAt(), response.expiresAt()).getSeconds();

@@ -6,11 +6,14 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { toast } from "sonner"
 import { Eye, EyeOff, Loader2 } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useAuthStore } from "@/stores/auth-store"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import Link from "next/link"
+import { AuthService } from "@/api/auth/auth-service"
 
 const signInSchema = z.object({
   email: z
@@ -26,9 +29,10 @@ type SignInFormData = z.infer<typeof signInSchema>
 
 export function SignInForm() {
   const [showPassword, setShowPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
   const [isGithubLoading, setIsGithubLoading] = useState(false)
+  const router = useRouter()
+  const { login } = useAuthStore()
 
   const form = useForm<SignInFormData>({
     resolver: zodResolver(signInSchema),
@@ -39,24 +43,36 @@ export function SignInForm() {
   })
 
   async function onSubmit(data: SignInFormData) {
-    setIsLoading(true)
+    const result = await AuthService.signIn(data)
 
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 2000))
-
-      console.log("Dados do formulário:", data)
-
-      toast.success("Login realizado com sucesso!", {
-        description: "Bem-vindo de volta!",
-      })
-    } catch (error) {
-      toast.error("Erro ao fazer login", {
-        description: "Verifique suas credenciais e tente novamente.",
-      })
-      console.error("Erro no login:", error)
-    } finally {
-      setIsLoading(false)
+    if (result.isLeft()) {
+      switch (result.error.errorCode) {
+        case "USER_NOT_ACCEPTED": {
+          toast.error("Usuário não aceito", {
+            description: "Você precisa ser aceito para fazer login.",
+          })
+          return;
+        }
+        case "INVALID_CREDENTIALS": {
+          toast.error("Credenciais inválidas", {
+            description: "Verifique seu email e senha.",
+          })
+          return;
+        }
+        default: {
+          toast.error("Erro ao fazer login", {
+            description: "Tente novamente mais tarde.",
+          })
+          return;
+        }
+      }
     }
+
+    toast.success("Login realizado com sucesso!", {
+      description: "Bem-vindo de volta!",
+    })
+
+    router.push('/');
   }
 
   async function handleGoogleSignIn() {
@@ -111,7 +127,8 @@ export function SignInForm() {
                       <Input
                         type="email"
                         placeholder="seu@email.com"
-                        disabled={isLoading}
+                        disabled={form.formState.isSubmitting}
+                        autoComplete="email"
                         {...field}
                       />
                     </FormControl>
@@ -139,7 +156,8 @@ export function SignInForm() {
                         <Input
                           type={showPassword ? "text" : "password"}
                           placeholder="Sua senha"
-                          disabled={isLoading}
+                          disabled={form.formState.isSubmitting}
+                          autoComplete="current-password"
                           {...field}
                         />
                         <Button
@@ -148,7 +166,7 @@ export function SignInForm() {
                           size="icon"
                           className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                           onClick={() => setShowPassword(!showPassword)}
-                          disabled={isLoading}
+                          disabled={form.formState.isSubmitting}
                         >
                           {showPassword ? (
                             <EyeOff className="h-4 w-4" />
@@ -166,10 +184,10 @@ export function SignInForm() {
               <Button
                 type="submit"
                 className="w-full"
-                disabled={isLoading}
+                disabled={form.formState.isSubmitting}
               >
-                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {isLoading ? "Entrando..." : "Entrar"}
+                {form.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {form.formState.isSubmitting ? "Entrando..." : "Entrar"}
               </Button>
 
               <div className="relative">
@@ -188,7 +206,7 @@ export function SignInForm() {
                   type="button"
                   variant="outline"
                   onClick={handleGoogleSignIn}
-                  disabled={isLoading || isGoogleLoading}
+                  disabled={form.formState.isSubmitting || isGoogleLoading}
                 >
                   {isGoogleLoading ? (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -202,7 +220,7 @@ export function SignInForm() {
                   type="button"
                   variant="outline"
                   onClick={handleGithubSignIn}
-                  disabled={isLoading || isGithubLoading}
+                  disabled={form.formState.isSubmitting || isGithubLoading}
                 >
                   {isGithubLoading ? (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

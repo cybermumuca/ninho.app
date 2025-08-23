@@ -6,6 +6,8 @@ import app.ninho.api.auth.domain.User;
 import app.ninho.api.auth.dto.io.SignInRequest;
 import app.ninho.api.auth.dto.io.SignInResponse;
 import app.ninho.api.auth.dto.SignUpRequest;
+import app.ninho.api.auth.exception.InvalidCredentialsException;
+import app.ninho.api.auth.exception.UserIsNotAcceptedException;
 import app.ninho.api.auth.repository.RoleRepository;
 import app.ninho.api.auth.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,10 +30,10 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
 
     public AuthenticationService(
-            RoleRepository roleRepository,
-            UserRepository userRepository,
-            JwtEncoder jwtEncoder,
-            PasswordEncoder passwordEncoder
+        RoleRepository roleRepository,
+        UserRepository userRepository,
+        JwtEncoder jwtEncoder,
+        PasswordEncoder passwordEncoder
     ) {
         this.roleRepository = roleRepository;
         this.userRepository = userRepository;
@@ -59,35 +61,33 @@ public class AuthenticationService {
         userRepository.save(user);
     }
 
-    public SignInResponse signIn(SignInRequest signInRequest) {
-        var user = userRepository.findByEmail(signInRequest.email())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    @Transactional
+    public SignInResponse signIn(SignInRequest request) {
+        var user = userRepository.findByEmail(request.email())
+            .orElseThrow(InvalidCredentialsException::new);
+
+        boolean passwordsMatch = passwordEncoder.matches(request.password(), user.getPassword());
+
+        if (!passwordsMatch) {
+            throw new InvalidCredentialsException();
+        }
 
         if (!user.isAccepted()) {
-            throw new RuntimeException("User is not accepted");
+            throw new UserIsNotAcceptedException();
         }
 
         var now = Instant.now();
-
-        var roles = user.getRoles()
-                .stream()
-                .map(Role::getName)
-                .toList();
-
-        var scopes = user.getScopes()
-                .stream()
-                .map(Scope::getName)
-                .toList();
-
+        var roles = user.getRoles().stream().map(Role::getName).toList();
+        var scopes = user.getScopes().stream().map(Scope::getName).toList();
         var expiresAt = now.plus(30, ChronoUnit.DAYS);
 
         var claims = JwtClaimsSet.builder()
-                .subject(user.getId())
-                .issuedAt(now)
-                .expiresAt(expiresAt)
-                .claim("roles", roles)
-                .claim("scopes", scopes)
-                .build();
+            .subject(user.getId())
+            .issuedAt(now)
+            .expiresAt(expiresAt)
+            .claim("roles", roles)
+            .claim("scopes", scopes)
+            .build();
 
         var accessToken = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
 
