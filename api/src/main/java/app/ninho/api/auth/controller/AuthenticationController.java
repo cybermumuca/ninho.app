@@ -1,9 +1,10 @@
 package app.ninho.api.auth.controller;
 
 import app.ninho.api.auth.dto.httpio.SignInHttpRequest;
+import app.ninho.api.auth.dto.httpio.SignUpHttpRequest;
 import app.ninho.api.auth.service.AuthenticationService;
 import app.ninho.api.auth.dto.io.SignInRequest;
-import app.ninho.api.auth.dto.SignUpRequest;
+import app.ninho.api.auth.dto.io.SignUpRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -24,7 +25,14 @@ public class AuthenticationController {
     }
 
     @PostMapping("/v1/auth/sign-up")
-    public ResponseEntity<Void> signUp(@Valid @RequestBody SignUpRequest request) {
+    public ResponseEntity<Void> signUp(@Valid @RequestBody SignUpHttpRequest httpRequest) {
+        var request = new SignUpRequest(
+            httpRequest.firstName(),
+            httpRequest.lastName(),
+            httpRequest.email(),
+            httpRequest.password()
+        );
+
         authenticationService.signUp(request);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();

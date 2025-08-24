@@ -16,3 +16,17 @@ type InvalidCredentials = {
 };
 
 export type SignInError = UserIsNotAcceptedError | InvalidCredentials | ApiError;
+
+export interface SignUpRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+}
+
+type UserAlreadyExistsError = {
+  message: string;
+  errorCode: "USER_ALREADY_EXISTS";
+};
+
+export type SignUpError = UserAlreadyExistsError | ApiError;

@@ -5,8 +5,9 @@ import app.ninho.api.auth.domain.Scope;
 import app.ninho.api.auth.domain.User;
 import app.ninho.api.auth.dto.io.SignInRequest;
 import app.ninho.api.auth.dto.io.SignInResponse;
-import app.ninho.api.auth.dto.SignUpRequest;
+import app.ninho.api.auth.dto.io.SignUpRequest;
 import app.ninho.api.auth.exception.InvalidCredentialsException;
+import app.ninho.api.auth.exception.UserAlreadyExistsException;
 import app.ninho.api.auth.exception.UserIsNotAcceptedException;
 import app.ninho.api.auth.repository.RoleRepository;
 import app.ninho.api.auth.repository.UserRepository;
@@ -46,7 +47,7 @@ public class AuthenticationService {
         var existingUser = userRepository.findByEmail(signUpRequest.email());
 
         if (existingUser.isPresent()) {
-            throw new RuntimeException("User with this email already exists");
+            throw new UserAlreadyExistsException();
         }
 
         var userRole = roleRepository.findByName(Role.Values.USER.name());

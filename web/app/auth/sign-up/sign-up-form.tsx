@@ -12,30 +12,33 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { PasswordStrength } from "@/components/password-strength"
 import Link from "next/link"
+import { AuthService } from "@/api/auth/auth-service"
+import { useRouter } from "next/navigation"
 
 const signUpSchema = z.object({
   firstName: z
     .string()
-    .min(2, "Nome deve ter pelo menos 2 caracteres")
-    .max(50, "Nome deve ter no máximo 50 caracteres")
-    .regex(/^[A-Za-zÀ-ÿ\s]+$/, "Nome deve conter apenas letras"),
+    .min(2, "Nome deve ter pelo menos 2 caracteres.")
+    .max(50, "Nome deve ter no máximo 50 caracteres.")
+    .regex(/^[A-Za-zÀ-ÿ\s]+$/, "Nome deve conter apenas letras."),
   lastName: z
     .string()
     .min(2, "Sobrenome deve ter pelo menos 2 caracteres")
-    .max(50, "Sobrenome deve ter no máximo 50 caracteres")
-    .regex(/^[A-Za-zÀ-ÿ\s]+$/, "Sobrenome deve conter apenas letras"),
+    .max(50, "Sobrenome deve ter no máximo 50 caracteres.")
+    .regex(/^[A-Za-zÀ-ÿ\s]+$/, "Sobrenome deve conter apenas letras."),
   email: z
-    .email("Formato de email inválido")
-    .min(1, "Email é obrigatório")
+    .string()
+    .email("Formato de email inválido.")
+    .min(1, "Email é obrigatório.")
     .toLowerCase(),
   password: z
     .string()
-    .min(8, "Senha deve ter pelo menos 8 caracteres")
+    .min(8, "Senha deve ter pelo menos 8 caracteres.")
     .regex(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/,
-      "A senha deve conter pelo menos 8 caracteres, uma letra maiúscula, uma letra minúscula e um número",
+      "A senha deve conter pelo menos 8 caracteres, uma letra maiúscula, uma letra minúscula e um número.",
     ),
-  confirmPassword: z.string().min(1, "Confirmação de senha é obrigatória"),
+  confirmPassword: z.string().min(1, "Confirmação de senha é obrigatória."),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Senhas não coincidem",
   path: ["confirmPassword"],
@@ -46,9 +49,9 @@ type SignUpFormData = z.infer<typeof signUpSchema>
 export function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
   const [isGithubLoading, setIsGithubLoading] = useState(false)
+  const router = useRouter()
 
   const form = useForm<SignUpFormData>({
     resolver: zodResolver(signUpSchema),
@@ -64,26 +67,31 @@ export function SignUpForm() {
   const watchPassword = form.watch("password")
 
   async function onSubmit(data: SignUpFormData) {
-    setIsLoading(true)
+    const result = await AuthService.signUp(data);
 
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 2000))
-
-      console.log("Dados do formulário:", data)
-
-      toast.success("Conta criada com sucesso!", {
-        description: `Enviaremos um email quando sua conta for aceita!`,
-        icon: <PartyPopper className="h-5 w-5" />,
-        richColors: true,
-      })
-    } catch (error) {
-      toast.error("Erro ao criar conta", {
-        description: "Tente novamente.",
-      })
-      console.error("Erro no cadastro:", error)
-    } finally {
-      setIsLoading(false)
+    if (result.isLeft()) {
+      switch (result.error.errorCode) {
+        case "USER_ALREADY_EXISTS": {
+          toast.error("Email já está em uso", {
+            description: "Tente fazer login ou use outro email.",
+          })
+          return;
+        }
+        default: {
+          toast.error("Erro ao criar conta", {
+            description: "Tente novamente mais tarde.",
+          })
+          return;
+        }
+      }
     }
+
+    toast.success("Conta criada com sucesso!", {
+      description: `Enviaremos um email quando sua conta for aceita!`,
+      icon: <PartyPopper className="h-5 w-5" />,
+    })
+
+    router.push("/auth/sign-in")
   }
 
   async function handleGoogleSignUp() {
@@ -146,7 +154,7 @@ export function SignUpForm() {
                       <FormControl>
                         <Input
                           placeholder="João"
-                          disabled={isLoading}
+                          disabled={form.formState.isSubmitting}
                           {...field}
                         />
                       </FormControl>
@@ -164,7 +172,7 @@ export function SignUpForm() {
                       <FormControl>
                         <Input
                           placeholder="Silva"
-                          disabled={isLoading}
+                          disabled={form.formState.isSubmitting}
                           {...field}
                         />
                       </FormControl>
@@ -184,7 +192,8 @@ export function SignUpForm() {
                       <Input
                         type="email"
                         placeholder="seu@email.com"
-                        disabled={isLoading}
+                        autoComplete="email"
+                        disabled={form.formState.isSubmitting}
                         {...field}
                       />
                     </FormControl>
@@ -204,7 +213,8 @@ export function SignUpForm() {
                         <Input
                           type={showPassword ? "text" : "password"}
                           placeholder="Sua senha segura"
-                          disabled={isLoading}
+                          autoComplete="new-password"
+                          disabled={form.formState.isSubmitting}
                           {...field}
                         />
                         <Button
@@ -213,7 +223,7 @@ export function SignUpForm() {
                           size="icon"
                           className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                           onClick={() => setShowPassword(!showPassword)}
-                          disabled={isLoading}
+                          disabled={form.formState.isSubmitting}
                         >
                           {showPassword ? (
                             <EyeOff className="h-4 w-4" />
@@ -240,7 +250,8 @@ export function SignUpForm() {
                         <Input
                           type={showConfirmPassword ? "text" : "password"}
                           placeholder="Confirme sua senha"
-                          disabled={isLoading}
+                          autoComplete="new-password"
+                          disabled={form.formState.isSubmitting}
                           {...field}
                         />
                         <Button
@@ -249,7 +260,7 @@ export function SignUpForm() {
                           size="icon"
                           className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                           onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                          disabled={isLoading}
+                          disabled={form.formState.isSubmitting}
                         >
                           {showConfirmPassword ? (
                             <EyeOff className="h-4 w-4" />
@@ -267,10 +278,10 @@ export function SignUpForm() {
               <Button
                 type="submit"
                 className="w-full"
-                disabled={isLoading}
+                disabled={form.formState.isSubmitting}
               >
-                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {isLoading ? "Criando conta..." : "Criar conta"}
+                {form.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {form.formState.isSubmitting ? "Criando conta..." : "Criar conta"}
               </Button>
 
               <div className="relative">
@@ -289,7 +300,7 @@ export function SignUpForm() {
                   type="button"
                   variant="outline"
                   onClick={handleGoogleSignUp}
-                  disabled={isLoading || isGoogleLoading}
+                  disabled={form.formState.isSubmitting || isGoogleLoading}
                 >
                   {isGoogleLoading ? (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -303,7 +314,7 @@ export function SignUpForm() {
                   type="button"
                   variant="outline"
                   onClick={handleGithubSignUp}
-                  disabled={isLoading || isGithubLoading}
+                  disabled={form.formState.isSubmitting || isGithubLoading}
                 >
                   {isGithubLoading ? (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

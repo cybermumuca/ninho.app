@@ -1,6 +1,7 @@
 package app.ninho.api.auth.exception.advice;
 
 import app.ninho.api.auth.exception.InvalidCredentialsException;
+import app.ninho.api.auth.exception.UserAlreadyExistsException;
 import app.ninho.api.auth.exception.UserIsNotAcceptedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,5 +28,13 @@ public class AuthenticationControllerAdvice {
         body.put("message", ex.getMessage());
         body.put("errorCode", ex.getErrorCode());
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(body);
+    }
+
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<Map<String, String>> handleUserAlreadyExists(UserAlreadyExistsException ex) {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", ex.getMessage());
+        body.put("errorCode", ex.getErrorCode());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
     }
 }

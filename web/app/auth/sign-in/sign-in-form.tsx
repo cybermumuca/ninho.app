@@ -7,7 +7,6 @@ import { z } from "zod"
 import { toast } from "sonner"
 import { Eye, EyeOff, Loader2 } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { useAuthStore } from "@/stores/auth-store"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -32,7 +31,6 @@ export function SignInForm() {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
   const [isGithubLoading, setIsGithubLoading] = useState(false)
   const router = useRouter()
-  const { login } = useAuthStore()
 
   const form = useForm<SignInFormData>({
     resolver: zodResolver(signInSchema),
