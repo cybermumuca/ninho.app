@@ -81,7 +81,7 @@ export default function CreateCategoryPage() {
 
   function onSubmit(data: AddCategoryFormData) {
     console.log("Dados da categoria:", data);
-    router.push("/categories");
+    router.back();
   }
 
   return (
