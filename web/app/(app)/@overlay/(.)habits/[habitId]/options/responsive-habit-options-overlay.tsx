@@ -1,5 +1,6 @@
 "use client";
 
+import { HabitCardIcon } from "@/app/(app)/habits/habit-icon";
 import { Button } from "@/components/ui/button";
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -68,11 +69,11 @@ export function ResponsiveHabitOptionsOverlay({ habitId }: { habitId: string }) 
     <div className="p-4 space-y-3">
       <Button className="w-full justify-start items-center" variant="outline" size="lg" onClick={handleOpenCalendar}>
         <CalendarIcon className="size-5" />
-        Ver Calendário
+        Ver calendário
       </Button>
       <Button className="w-full justify-start items-center" variant="outline" size="lg" onClick={handleOpenStatistics}>
         <ChartNoAxesColumnDecreasingIcon className="size-5" strokeWidth={3} />
-        Ver Estatísticas
+        Ver estatísticas
       </Button>
       {!isArchived && (
         <Button className="w-full justify-start items-center" variant="outline" size="lg" onClick={handleEdit}>
@@ -101,27 +102,39 @@ export function ResponsiveHabitOptionsOverlay({ habitId }: { habitId: string }) 
   )
 
   if (isMobile) {
-    return <Drawer open={open} onOpenChange={handleOpenChange}>
-      <DrawerContent>
-        <DrawerHeader className="space-y-1">
-          <DrawerTitle>{habit?.title || "Hábito"}</DrawerTitle>
-          <DrawerDescription className={`text-xs px-2 py-1 ${Object.values(getCategoryColorClasses(habit?.category.color || "gray")).join(" ")} mx-auto text-nowrap rounded-md font-semibold`}>
-            {getFrequencyDescription(habit?.frequency || { type: "DAILY" })}
-          </DrawerDescription>
-        </DrawerHeader>
-        {content}
-      </DrawerContent>
-    </Drawer>
+    return (
+      <Drawer open={open} onOpenChange={handleOpenChange}>
+        <DrawerContent>
+          <DrawerHeader className="flex-row items-center justify-between">
+            <div className="flex flex-col gap-0.5 items-start">
+              <DrawerTitle>{habit?.title || "Hábito"}</DrawerTitle>
+              <DrawerDescription className={`text-xs px-2 py-1 ${Object.values(getCategoryColorClasses(habit?.category.color || "gray")).join(" ")} text-nowrap rounded-md font-semibold`}>
+                {getFrequencyDescription(habit?.frequency || { type: "DAILY" })}
+              </DrawerDescription>
+            </div>
+            <div className={`rounded-lg ${Object.values(getCategoryColorClasses(habit?.category.color || "gray")).join(" ")} flex items-center justify-center p-2 border-2`}>
+              <HabitCardIcon icon={habit?.category.icon || "icon"} />
+            </div>
+          </DrawerHeader>
+          {content}
+        </DrawerContent>
+      </Drawer>
+    );
   }
 
   return (
     <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetContent>
-        <SheetHeader>
-          <SheetTitle>{habit?.title || "Hábito"}</SheetTitle>
-          <SheetDescription className={`text-xs px-2 py-1 ${Object.values(getCategoryColorClasses(habit?.category.color || "gray")).join(" ")} mx-auto text-nowrap rounded-md font-semibold`}>
-            {getFrequencyDescription(habit?.frequency || { type: "DAILY" })}
-          </SheetDescription>
+        <SheetHeader className="flex-row items-center justify-between pe-8">
+          <div className="flex flex-col gap-0.5 items-start">
+            <SheetTitle>{habit?.title || "Hábito"}</SheetTitle>
+            <SheetDescription className={`text-xs px-2 py-1 ${Object.values(getCategoryColorClasses(habit?.category.color || "gray")).join(" ")} text-nowrap rounded-md font-semibold text-start`}>
+              {getFrequencyDescription(habit?.frequency || { type: "DAILY" })}
+            </SheetDescription>
+          </div>
+          <div className={`rounded-lg ${Object.values(getCategoryColorClasses(habit?.category.color || "gray")).join(" ")} flex items-center justify-center p-2 border-2`}>
+            <HabitCardIcon icon={habit?.category.icon || "icon"} />
+          </div>
         </SheetHeader>
         {content}
       </SheetContent>

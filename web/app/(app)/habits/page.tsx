@@ -41,6 +41,8 @@ export default function HabitsPage() {
                     frequency={habit.frequency}
                     streak={habit.streak}
                     successRate={habit.successRate}
+                    startDate={habit.startDate}
+                    endDate={habit.endDate}
                     weekProgress={habit.weekProgress}
                   />
                 ))}
