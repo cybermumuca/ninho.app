@@ -17,11 +17,14 @@ export interface HabitWeekProgress {
   status: HabitWeekProgressStatus;
   goal?: string;
   achieved?: string;
+  taskId: string;
+  isInFrequencyRange: boolean;
 }
 
-interface HabitItem {
+export interface HabitItem {
   id: string;
   title: string;
+  description: string;
   type: HabitType;
   frequency: DAILY_FREQUENCY | PERIOD_COUNT_FREQUENCY;
   category: {
