@@ -7,6 +7,7 @@ import { CalendarIcon, ChartNoAxesColumnDecreasingIcon, CircleCheckIcon, Dumbbel
 import { useRouter } from "next/navigation";
 import { HabitWeekProgressItem } from "./habit-week-progress-item";
 import { HabitCardIcon } from "./habit-icon";
+import { HabitWeekProgress } from "@/lib/types/habit";
 
 type DAILY_FREQUENCY = {
   type: "DAILY";
@@ -33,13 +34,7 @@ interface HabitCardProps {
   successRate: number;
   startDate: string;
   endDate: string | null;
-  weekProgress: {
-    day: string;
-    status: "SUCCESS" | "FAILURE" | "SKIPPED" | "PENDING";
-    goal?: string;
-    achieved?: string;
-    taskId: string;
-  }[];
+  weekProgress: HabitWeekProgress[];
 }
 
 export function HabitCard({ id, title, type, frequency, category, weekProgress, streak, successRate, startDate, endDate }: HabitCardProps) {
