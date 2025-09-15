@@ -1,15 +1,12 @@
-"use client";
-
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { HabitType, HabitFrequency } from "@/lib/types/habit";
 import { getCategoryColorClasses, getFrequencyDescription } from "@/lib/utils";
-import { CalendarIcon, ChartNoAxesColumnDecreasingIcon, CircleCheckIcon, DumbbellIcon, FlameIcon, MusicIcon, PencilIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { HabitWeekProgressItem } from "./habit-week-progress-item";
-import { HabitCardIcon } from "./habit-icon";
-import { HabitFrequency, HabitType, HabitWeekProgress } from "@/lib/types/habit";
+import { HabitCardIcon } from "../habit-icon";
+import { CalendarIcon, ChartNoAxesColumnDecreasingIcon, CircleCheckIcon, FlameIcon, PencilIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
-interface HabitCardProps {
+interface ArchivedHabitCardProps {
   id: string;
   title: string;
   type: HabitType;
@@ -22,12 +19,9 @@ interface HabitCardProps {
   };
   streak: number;
   successRate: number;
-  startDate: string;
-  endDate: string | null;
-  weekProgress: HabitWeekProgress[];
 }
 
-export function HabitCard({ id, title, type, frequency, category, weekProgress, streak, successRate, startDate, endDate }: HabitCardProps) {
+export function ArchivedHabitCard({ id, title, type, frequency, category, streak, successRate }: ArchivedHabitCardProps) {
   const router = useRouter();
 
   function handleOpenCalendar(e: React.MouseEvent) {
@@ -64,21 +58,6 @@ export function HabitCard({ id, title, type, frequency, category, weekProgress, 
           <HabitCardIcon icon={category.icon} />
         </div>
       </CardHeader>
-      <CardContent className="px-4 max-h-min pb-6">
-        <div className="grid grid-cols-7 gap-3">
-          {weekProgress.map((progress, index) => (
-            <HabitWeekProgressItem
-              key={progress.day + progress.status + index}
-              day={progress.day}
-              status={progress.status}
-              taskId={progress.taskId}
-              habitId={id}
-              startDate={startDate}
-              endDate={endDate}
-            />
-          ))}
-        </div>
-      </CardContent>
       <CardFooter className="flex items-center justify-between border-t px-4 py-2 [.border-t]:py-2">
         <div className="flex gap-4 items-center flex-1">
           <div className="flex gap-1 items-center">
@@ -121,7 +100,5 @@ export function HabitCard({ id, title, type, frequency, category, weekProgress, 
         </div>
       </CardFooter>
     </Card>
-  )
+  );
 }
-
-

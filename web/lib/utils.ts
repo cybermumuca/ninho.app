@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-import type { DAILY_FREQUENCY, PERIOD_COUNT_FREQUENCY } from "./types/habit";
+import type { DAILY_FREQUENCY, HabitFrequency, PERIOD_COUNT_FREQUENCY } from "./types/habit";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -13,7 +13,7 @@ export function formatCurrency(value: number, currency: string = "BRL") {
   }).format(value);
 }
 
-export function getFrequencyDescription(frequency: DAILY_FREQUENCY | PERIOD_COUNT_FREQUENCY) {
+export function getFrequencyDescription(frequency: HabitFrequency) {
   switch (frequency.type) {
     case "DAILY": {
       return "Todos os dias";
@@ -26,6 +26,20 @@ export function getFrequencyDescription(frequency: DAILY_FREQUENCY | PERIOD_COUN
       };
 
       return `${frequency.count} ${frequency.count > 1 ? "vezes" : "vez"} por ${periodMap[frequency.period]}`;
+    }
+    case "WEEKLY_DAYS": {
+      const dayMap = {
+        "SUNDAY": "Domingo",
+        "MONDAY": "Segunda",
+        "TUESDAY": "Terça",
+        "WEDNESDAY": "Quarta",
+        "THURSDAY": "Quinta",
+        "FRIDAY": "Sexta",
+        "SATURDAY": "Sábado"
+      };
+
+      const days = frequency.weekDays.map(day => dayMap[day]);
+      return `Todas as ${days.join(", ")}`;
     }
   }
 }

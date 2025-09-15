@@ -66,5 +66,48 @@ export const mockHabitsList: HabitItem[] = [
       { day: getDateDaysAgo(0), status: "PENDING", taskId: "t7", isInFrequencyRange: true },
     ],
     isActive: true
+  },
+  {
+    id: "3",
+    title: "Estudar Inglês",
+    description: "Estudar inglês por pelo menos 1 hora.",
+    type: "TIMED",
+    frequency: {
+      type: "WEEKLY_DAYS",
+      weekDays: ["MONDAY", "WEDNESDAY", "FRIDAY"]
+    },
+    category: {
+      id: "c3",
+      name: "Estudos",
+      icon: "book",
+      color: "green"
+    },
+    streak: 4,
+    successRate: 0.5714,
+    startDate: getDateDaysAgo(30),
+    endDate: null,
+    weekProgress: [
+      { day: getDateDaysAgo(19), status: "SUCCESS", goal: "01:00:00", achieved: "01:10:00", taskId: "t20", isInFrequencyRange: true },
+      { day: getDateDaysAgo(18), status: "FAILURE", goal: "01:00:00", achieved: "00:45:00", taskId: "t19", isInFrequencyRange: false },
+      { day: getDateDaysAgo(17), status: "SKIPPED", goal: "01:00:00", achieved: "00:00:00", taskId: "t18", isInFrequencyRange: false },
+      { day: getDateDaysAgo(16), status: "SUCCESS", goal: "01:00:00", achieved: "01:05:00", taskId: "t17", isInFrequencyRange: true },
+      { day: getDateDaysAgo(15), status: "FAILURE", goal: "01:00:00", achieved: "00:30:00", taskId: "t16", isInFrequencyRange: true },
+      { day: getDateDaysAgo(14), status: "SUCCESS", goal: "01:00:00", achieved: "01:20:00", taskId: "t15", isInFrequencyRange: false },
+      { day: getDateDaysAgo(13), status: "SKIPPED", goal: "01:00:00", achieved: "00:00:00", taskId: "t14", isInFrequencyRange: false },
+      { day: getDateDaysAgo(12), status: "SUCCESS", goal: "01:00:00", achieved: "01:15:00", taskId: "t13", isInFrequencyRange: true },
+      { day: getDateDaysAgo(11), status: "FAILURE", goal: "01:00:00", achieved: "00:40:00", taskId: "t12", isInFrequencyRange: true },
+      { day: getDateDaysAgo(10), status: "SUCCESS", goal: "01:00:00", achieved: "01:00:00", taskId: "t11", isInFrequencyRange: false },
+      { day: getDateDaysAgo(9), status: "SKIPPED", goal: "01:00:00", achieved: "00:00:00", taskId: "t10", isInFrequencyRange: false },
+      { day: getDateDaysAgo(8), status: "SUCCESS", goal: "01:00:00", achieved: "01:25:00", taskId: "t9", isInFrequencyRange: true },
+      { day: getDateDaysAgo(7), status: "FAILURE", goal: "01:00:00", achieved: "00:50:00", taskId: "t8", isInFrequencyRange: true },
+      { day: getDateDaysAgo(6), status: "SUCCESS", goal: "01:00:00", achieved: "01:30:00", taskId: "t7", isInFrequencyRange: false },
+      { day: getDateDaysAgo(5), status: "SKIPPED", goal: "01:00:00", achieved: "00:00:00", taskId: "t6", isInFrequencyRange: false },
+      { day: getDateDaysAgo(4), status: "FAILURE", goal: "01:00:00", achieved: "00:45:00", taskId: "t5", isInFrequencyRange: true },
+      { day: getDateDaysAgo(3), status: "SUCCESS", goal: "01:00:00", achieved: "01:10:00", taskId: "t4", isInFrequencyRange: true },
+      { day: getDateDaysAgo(2), status: "SKIPPED", goal: "01:00:00", achieved: "00:00:00", taskId: "t3", isInFrequencyRange: false },
+      { day: getDateDaysAgo(1), status: "SUCCESS", goal: "01:00:00", achieved: "01:05:00", taskId: "t2", isInFrequencyRange: true },
+      { day: getDateDaysAgo(0), status: "PENDING", goal: "01:00:00", achieved: "00:00:00", taskId: "t1", isInFrequencyRange: false },
+    ],
+    isActive: false
   }
 ]
