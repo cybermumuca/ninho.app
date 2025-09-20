@@ -3,11 +3,12 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { getCategoryColorClasses, getFrequencyDescription } from "@/lib/utils";
-import { CalendarIcon, ChartNoAxesColumnDecreasingIcon, CircleCheckIcon, DumbbellIcon, FlameIcon, MusicIcon, PencilIcon } from "lucide-react";
+import { CalendarIcon, ChartNoAxesColumnDecreasingIcon, CircleCheckIcon, FlameIcon, PencilIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { HabitWeekProgressItem } from "./habit-week-progress-item";
-import { HabitCardIcon } from "./habit-icon";
 import { HabitFrequency, HabitType, HabitWeekProgress } from "@/lib/types/habit";
+import { Icon } from "@/components/icon";
+import { IconWrapper } from "@/components/icon-wrapper";
 
 interface HabitCardProps {
   id: string;
@@ -60,9 +61,9 @@ export function HabitCard({ id, title, type, frequency, category, weekProgress, 
             {getFrequencyDescription(frequency)}
           </CardDescription>
         </div>
-        <div className={`rounded-lg ${Object.values(getCategoryColorClasses(category.color)).join(" ")} flex items-center justify-center p-2 border-2`}>
-          <HabitCardIcon icon={category.icon} />
-        </div>
+        <IconWrapper color={category.color}>
+          <Icon icon={category.icon} />
+        </IconWrapper>
       </CardHeader>
       <CardContent className="px-4 max-h-min pb-6">
         <div className="grid grid-cols-7 gap-3">
@@ -123,5 +124,3 @@ export function HabitCard({ id, title, type, frequency, category, weekProgress, 
     </Card>
   )
 }
-
-

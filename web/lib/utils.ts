@@ -125,3 +125,15 @@ export function getCategoryColorClasses(color: string) {
 
   return colorMap[color as keyof typeof colorMap] || colorMap["gray"];
 }
+
+export function getActivityTypeLabel(activityType: string) {
+  const activityTypeMap = {
+    "TASK": "Tarefa",
+    "EVENT": "Evento",
+    "HOUSEHOLD_TASK": "Tarefa Doméstica",
+    "HABIT": "Hábito",
+    "ANNIVERSARY": "Aniversário"
+  };
+
+  return activityTypeMap[activityType as keyof typeof activityTypeMap] || "Atividade";
+}

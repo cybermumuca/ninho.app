@@ -1,5 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { GroceryListsItem } from "@/app/(app)/grocery-lists/grocery-lists-item";
+import { GroceryListsItem } from "@/app/(app)/(mobile-navigation)/grocery-lists/grocery-lists-item";
 import { mockGroceriesList } from "@/data/groceries";
 import { Metadata } from "next";
 
