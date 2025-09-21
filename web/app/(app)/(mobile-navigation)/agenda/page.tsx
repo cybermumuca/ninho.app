@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { CalendarDaysIcon, CirclePlusIcon } from "lucide-react";
 import Link from "next/link";
 import { ActivityCard } from "./activity-card";
+import { mockActivitiesList } from "@/data/activities";
 
 export default function AgendaPage() {
   return (
@@ -36,9 +37,9 @@ export default function AgendaPage() {
         </div>
       </header>
       <main className="flex-1 container mx-auto px-4 pb-4 space-y-2">
-        <ActivityCard id={"1"} title={"Praticar no Teclado"} activityType={"HABIT"} color="blue" icon="music" />
-        <ActivityCard id={"2"} title={"Jogar o lixo"} activityType={"HOUSEHOLD_TASK"} color="green" icon="brush-cleaning" />
-        <ActivityCard id={"3"} title={"Trabalho"} activityType={"EVENT"} color="yellow" icon="briefcase-2" startDateTime="08:00" endDateTime="16:00" />
+        {mockActivitiesList.map((activity) => {
+          return <ActivityCard key={activity.id} {...activity} />;
+        })}
       </main>
     </div>
   );
