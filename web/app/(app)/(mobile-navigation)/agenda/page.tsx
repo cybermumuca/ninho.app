@@ -3,6 +3,7 @@ import { CalendarDaysIcon, CirclePlusIcon } from "lucide-react";
 import Link from "next/link";
 import { ActivityCard } from "./activity-card";
 import { mockActivitiesList } from "@/data/activities";
+import { MiniCalendar } from "./mini-calendar";
 
 export default function AgendaPage() {
   return (
@@ -35,8 +36,9 @@ export default function AgendaPage() {
             </Button>
           </div>
         </div>
+        <MiniCalendar />
       </header>
-      <main className="flex-1 container mx-auto px-4 pb-4 space-y-2">
+      <main className="flex-1 container mx-auto px-4 pb-4 mt-2 mb-20 space-y-2">
         {mockActivitiesList.map((activity) => {
           return <ActivityCard key={activity.id} {...activity} />;
         })}
