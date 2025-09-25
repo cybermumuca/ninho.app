@@ -1,88 +1,84 @@
 "use client";
 
-import { useState } from "react";
-import { ChevronLeftIcon, ChevronRightIcon, FlameIcon, MessageSquareMoreIcon } from "lucide-react";
+import { useState, useMemo } from "react";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  FlameIcon,
+  MessageSquareMoreIcon
+} from "lucide-react";
+import {
+  eachDayOfInterval,
+  startOfMonth,
+  endOfMonth,
+  startOfWeek,
+  endOfWeek,
+  getDate,
+  isSameMonth,
+  format
+} from "date-fns";
+import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { CalendarDay } from "./calendar-day";
 import { mockHabitsList } from "@/data/habits";
 import { notFound, useParams } from "next/navigation";
 
-const monthNames = [
-  "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
-  "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
-];
-
 const weekDays = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 
 export default function HabitCalendarPage() {
   const { habitId } = useParams<{ habitId: string }>();
   const habit = mockHabitsList.find(h => h.id === habitId);
-  const [currentDate, setCurrentDate] = useState(new Date(2025, 8, 12));
+  const [currentDate, setCurrentDate] = useState(new Date());
 
   if (!habit) {
     return notFound();
   }
 
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth();
+  const calendarDays = useMemo(() => {
+    const monthStart = startOfMonth(currentDate);
+    const monthEnd = endOfMonth(currentDate);
+    const calendarStart = startOfWeek(monthStart, { weekStartsOn: 0 }); // Domingo
+    const calendarEnd = endOfWeek(monthEnd, { weekStartsOn: 0 });
 
-  const firstDayOfMonth = new Date(year, month, 1);
-  const lastDayOfMonth = new Date(year, month + 1, 0);
-  const firstDayWeekday = firstDayOfMonth.getDay();
-  const daysInMonth = lastDayOfMonth.getDate();
+    // 6 semanas (42 dias)
+    const weeksToShow = Math.ceil(eachDayOfInterval({
+      start: calendarStart,
+      end: calendarEnd
+    }).length / 7);
 
-  const prevMonth = new Date(year, month - 1, 0);
-  const daysInPrevMonth = prevMonth.getDate();
+    const finalCalendarEnd = weeksToShow < 6
+      ? new Date(calendarEnd.getTime() + (6 - weeksToShow) * 7 * 24 * 60 * 60 * 1000)
+      : calendarEnd;
 
-  const calendarDays = [];
+    return eachDayOfInterval({
+      start: calendarStart,
+      end: finalCalendarEnd
+    }).slice(0, 42).map(date => {
+      const dateString = date.toISOString().split('T')[0];
+      const progressData = habit?.weekProgress.find(p => p.day === dateString);
 
-  for (let i = firstDayWeekday - 1; i >= 0; i--) {
-    const day = daysInPrevMonth - i;
-    const date = new Date(year, month - 1, day);
-    const dateString = date.toISOString().split('T')[0];
-    calendarDays.push({
-      day,
-      status: habit?.weekProgress.find(p => p.day === dateString)?.status,
-      isCurrentMonth: false,
-      date: dateString,
-      taskId: habit?.weekProgress.find(p => p.day === dateString)?.taskId || "",
-      isInFrequencyRange: habit?.weekProgress.find(p => p.day === dateString)?.isInFrequencyRange || false,
+      return {
+        day: getDate(date),
+        status: progressData?.status,
+        isCurrentMonth: isSameMonth(date, currentDate),
+        date: dateString,
+        taskId: progressData?.taskId || "",
+        isInFrequencyRange: progressData?.isInFrequencyRange || false,
+        fullDate: date
+      };
     });
-  }
-
-  for (let day = 1; day <= daysInMonth; day++) {
-    const date = new Date(year, month, day);
-    const dateString = date.toISOString().split('T')[0];
-    calendarDays.push({
-      day,
-      status: habit?.weekProgress.find(p => p.day === dateString)?.status,
-      isCurrentMonth: true,
-      date: dateString,
-      taskId: habit?.weekProgress.find(p => p.day === dateString)?.taskId || "",
-      isInFrequencyRange: habit?.weekProgress.find(p => p.day === dateString)?.isInFrequencyRange || false,
-    });
-  }
-
-  const remainingDays = 42 - calendarDays.length;
-  for (let day = 1; day <= remainingDays; day++) {
-    const date = new Date(year, month + 1, day);
-    const dateString = date.toISOString().split('T')[0];
-    calendarDays.push({
-      day,
-      status: habit?.weekProgress.find(p => p.day === dateString)?.status,
-      isCurrentMonth: false,
-      date: dateString,
-      taskId: habit?.weekProgress.find(p => p.day === dateString)?.taskId || "",
-      isInFrequencyRange: habit?.weekProgress.find(p => p.day === dateString)?.isInFrequencyRange || false,
-    });
-  }
+  }, [currentDate, habit?.weekProgress]);
 
   function goToPreviousMonth() {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
     setCurrentDate(new Date(year, month - 1, 1));
   }
 
   function goToNextMonth() {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
     setCurrentDate(new Date(year, month + 1, 1));
   }
 
@@ -99,9 +95,9 @@ export default function HabitCalendarPage() {
 
         <div className="flex flex-col items-center py-2">
           <h1 className="text-base font-bold text-foreground">
-            {monthNames[month]}
+            {format(currentDate, 'MMMM', { locale: ptBR }).replace(/^./, c => c.toUpperCase())}
           </h1>
-          <p className="text-sm text-muted-foreground">{year}</p>
+          <p className="text-sm text-muted-foreground">{format(currentDate, 'yyyy')}</p>
         </div>
 
         <Button
