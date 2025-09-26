@@ -2,12 +2,13 @@ package app.ninho.api.wellbeing.domain;
 
 import app.ninho.api.agenda.domain.Category;
 import app.ninho.api.auth.domain.User;
+import app.ninho.api.recurrence.domain.Frequency;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
-import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "habits")
@@ -24,18 +25,20 @@ public class Habit {
     private String description;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "frequency_type")
+    @Column(name = "modality")
     private Modality modality;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @Column(name = "start_date")
-    private LocalDate startDate;
-
-    @Column(name = "due_date")
-    private LocalDate dueDate;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "habits_frequencies",
+            joinColumns = @JoinColumn(name = "habit_id"),
+            inverseJoinColumns = @JoinColumn(name = "frequency_id")
+    )
+    private List<Frequency> tracks;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id")
@@ -92,20 +95,12 @@ public class Habit {
         this.category = category;
     }
 
-    public LocalDate getStartDate() {
-        return startDate;
+    public List<Frequency> getTracks() {
+        return tracks;
     }
 
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-    }
-
-    public LocalDate getDueDate() {
-        return dueDate;
-    }
-
-    public void setDueDate(LocalDate dueDate) {
-        this.dueDate = dueDate;
+    public void setTracks(List<Frequency> tracks) {
+        this.tracks = tracks;
     }
 
     public User getOwner() {

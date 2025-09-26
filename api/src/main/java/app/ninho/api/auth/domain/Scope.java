@@ -110,7 +110,10 @@ public class Scope {
         CATEGORY_READ("category:read", "Permissão para visualizar detalhes de uma categoria específica"),
         CATEGORY_CREATE("category:create", "Permissão para criar uma nova categoria"),
         CATEGORY_UPDATE("category:update", "Permissão para atualizar uma categoria existente"),
-        CATEGORY_DELETE("category:delete", "Permissão para deletar uma categoria existente");
+        CATEGORY_DELETE("category:delete", "Permissão para deletar uma categoria existente"),
+
+        // Habit permissions
+        HABIT_CREATE("habit:create", "Permissão para criar um novo hábito");
 
         public final String name;
         public final String description;
