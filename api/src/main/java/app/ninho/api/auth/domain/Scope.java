@@ -116,7 +116,8 @@ public class Scope {
         HABIT_CREATE("habit:create", "Permissão para criar um novo hábito"),
 
         // Task permissions
-        TASK_CREATE("task:create", "Permissão para criar uma nova tarefa");
+        TASK_CREATE("task:create", "Permissão para criar uma nova tarefa"),
+        TASK_READ("task:read", "Permissão para ler/visualizar uma tarefa existente");
 
         public final String name;
         public final String description;

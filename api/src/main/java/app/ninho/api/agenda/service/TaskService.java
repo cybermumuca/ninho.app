@@ -2,6 +2,8 @@ package app.ninho.api.agenda.service;
 
 import app.ninho.api.agenda.domain.Task;
 import app.ninho.api.agenda.dto.io.CreateTaskRequest;
+import app.ninho.api.agenda.dto.io.GetTaskRequest;
+import app.ninho.api.agenda.dto.io.GetTaskResponse;
 import app.ninho.api.agenda.repository.CategoryRepository;
 import app.ninho.api.agenda.repository.TagRepository;
 import app.ninho.api.agenda.repository.TaskRepository;
@@ -81,5 +83,49 @@ public class TaskService {
         task.setEstimatedDuration(request.estimatedDuration());
 
         taskRepository.save(task);
+    }
+
+    @Transactional(readOnly = true)
+    public GetTaskResponse getTask(GetTaskRequest request) {
+        var principal = userRepository.findById(request.principalId())
+            .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        var principalHasPermission = principal.checkScope(Scope.Values.TASK_READ.name());
+
+        if (!principalHasPermission) {
+            throw new IllegalArgumentException("User does not have permission to create tasks");
+        }
+
+        var task = taskRepository.findByIdWithCategoryAndTagsAndFrequency(request.taskId())
+            .orElseThrow(() -> new IllegalArgumentException("Task not found"));
+
+        if (!task.getOwner().getId().equals(principal.getId())) {
+            throw new IllegalArgumentException("Task does not belong to the user");
+        }
+
+        var track = task.getTracks().stream().findFirst()
+            .orElseThrow(() -> new IllegalArgumentException("Task track not found"));
+
+        return new GetTaskResponse(
+            task.getId(),
+            task.getTitle(),
+            new GetTaskResponse.Category(
+                task.getCategory().getId(),
+                task.getCategory().getName(),
+                task.getCategory().getIcon(),
+                task.getCategory().getColor()
+            ),
+            track.getStartDate(),
+            track.getEndDate(),
+            task.getEstimatedDuration(),
+            task.getActualDuration(),
+            task.getCompletedAt(),
+            task.getTags().stream().map(tag -> new GetTaskResponse.Tag(
+                tag.getId(),
+                tag.getName(),
+                tag.getColor()
+            )).toList(),
+            task.getNotes()
+        );
     }
 }
