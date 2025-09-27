@@ -13,6 +13,7 @@ import java.time.LocalDate;
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 @Table(name = "frequencies")
 public sealed abstract class Frequency permits
+    SingleOccurrenceFrequency,
     DailyFrequency,
     WeeklyFrequency,
     MonthlyDayFrequency,

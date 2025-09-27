@@ -113,7 +113,10 @@ public class Scope {
         CATEGORY_DELETE("category:delete", "Permissão para deletar uma categoria existente"),
 
         // Habit permissions
-        HABIT_CREATE("habit:create", "Permissão para criar um novo hábito");
+        HABIT_CREATE("habit:create", "Permissão para criar um novo hábito"),
+
+        // Task permissions
+        TASK_CREATE("task:create", "Permissão para criar uma nova tarefa");
 
         public final String name;
         public final String description;
