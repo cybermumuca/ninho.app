@@ -2,6 +2,7 @@ package app.ninho.api.agenda.service;
 
 import app.ninho.api.agenda.domain.Task;
 import app.ninho.api.agenda.dto.io.CreateTaskRequest;
+import app.ninho.api.agenda.dto.io.DeleteTaskRequest;
 import app.ninho.api.agenda.dto.io.GetTaskRequest;
 import app.ninho.api.agenda.dto.io.GetTaskResponse;
 import app.ninho.api.agenda.repository.CategoryRepository;
@@ -9,6 +10,7 @@ import app.ninho.api.agenda.repository.TagRepository;
 import app.ninho.api.agenda.repository.TaskRepository;
 import app.ninho.api.auth.domain.Scope;
 import app.ninho.api.auth.repository.UserRepository;
+import app.ninho.api.recurrence.domain.Frequency;
 import app.ninho.api.recurrence.domain.SingleOccurrenceFrequency;
 import app.ninho.api.recurrence.repository.FrequencyRepository;
 import org.springframework.stereotype.Service;
@@ -127,5 +129,33 @@ public class TaskService {
             )).toList(),
             task.getNotes()
         );
+    }
+
+    @Transactional
+    public void deleteTask(DeleteTaskRequest request) {
+        var principal = userRepository.findById(request.principalId())
+            .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        var principalHasPermission = principal.checkScope(Scope.Values.TASK_DELETE.name());
+
+        if (!principalHasPermission) {
+            throw new IllegalArgumentException("User does not have permission to delete tasks");
+        }
+
+        var task = taskRepository.findByIdWithFrequency(request.taskId())
+            .orElseThrow(() -> new IllegalArgumentException("Task not found"));
+
+        if (!task.getOwner().getId().equals(principal.getId())) {
+            throw new IllegalArgumentException("Task does not belong to the user");
+        }
+
+        var tasksToDelete = task.getTracks()
+            .stream()
+            .map(Frequency::getId)
+            .toList();
+
+        frequencyRepository.deleteAllById(tasksToDelete);
+
+        taskRepository.delete(task);
     }
 }

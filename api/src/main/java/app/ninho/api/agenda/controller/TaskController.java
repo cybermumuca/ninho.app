@@ -2,6 +2,7 @@ package app.ninho.api.agenda.controller;
 
 import app.ninho.api.agenda.dto.httpio.CreateTaskHttpRequest;
 import app.ninho.api.agenda.dto.io.CreateTaskRequest;
+import app.ninho.api.agenda.dto.io.DeleteTaskRequest;
 import app.ninho.api.agenda.dto.io.GetTaskRequest;
 import app.ninho.api.agenda.dto.io.GetTaskResponse;
 import app.ninho.api.agenda.service.TaskService;
@@ -53,5 +54,18 @@ public class TaskController {
         var response = taskService.getTask(new GetTaskRequest(taskId, jwt.getSubject()));
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @DeleteMapping("/v1/tasks/{id}")
+    @PreAuthorize("hasAuthority('task:delete')")
+    public ResponseEntity<Void> deleteTask(
+        @PathVariable("id") String taskId,
+        @AuthenticationPrincipal Jwt jwt
+    ) {
+        var request = new DeleteTaskRequest(taskId, jwt.getSubject());
+
+        taskService.deleteTask(request);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

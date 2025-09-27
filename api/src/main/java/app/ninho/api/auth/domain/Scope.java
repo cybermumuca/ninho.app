@@ -117,7 +117,8 @@ public class Scope {
 
         // Task permissions
         TASK_CREATE("task:create", "Permissão para criar uma nova tarefa"),
-        TASK_READ("task:read", "Permissão para ler/visualizar uma tarefa existente");
+        TASK_READ("task:read", "Permissão para ler/visualizar uma tarefa existente"),
+        TASK_DELETE("task:delete", "Permissão para deletar uma tarefa existente");
 
         public final String name;
         public final String description;

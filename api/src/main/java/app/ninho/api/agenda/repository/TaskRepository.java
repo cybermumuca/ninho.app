@@ -19,4 +19,11 @@ public interface TaskRepository extends JpaRepository<Task, String> {
         WHERE t.id = :taskId
     """)
     Optional<Task> findByIdWithCategoryAndTagsAndFrequency(@Param("taskId") String taskId);
+
+    @Query("""
+        SELECT t FROM Task t
+        LEFT JOIN FETCH t.tracks
+        WHERE t.id = :taskId
+    """)
+    Optional<Task> findByIdWithFrequency(@Param("taskId") String taskId);
 }
