@@ -28,7 +28,7 @@ export function TaskItem({
   const router = useRouter();
 
   function handleOpenOptions() {
-    router.push(`/tasks/${id}/options`);
+    router.push(`/tasks/single/${id}/options`);
   }
 
   function formatDuration(duration?: string) {
