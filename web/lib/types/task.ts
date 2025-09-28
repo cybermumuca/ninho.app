@@ -1,31 +1,23 @@
 export interface Task {
   id: string;
   title: string;
-  description?: string;
-  categoryId: string;
-  category?: {
+  category: {
     id: string;
     name: string;
     icon: string;
     color: string;
   };
-  startDate: string;
-  dueDate?: string;
-  startDateTime?: string;
-  dueDateTime?: string;
-  estimatedDuration?: number; // em minutos
-  annotation?: string;
-  tagIds: string[];
-  tags?: Array<{
+  notes: string | null;
+  date: string;
+  dueDate: string | null;
+  estimatedDuration: string | null; // hh:mm:ss
+  tags: Array<{
     id: string;
     name: string;
     color: string;
   }>;
-  status: "PENDING" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED";
-  priority: "LOW" | "MEDIUM" | "HIGH";
-  createdAt: string;
-  updatedAt: string;
-  completedAt?: string;
+  status: "PENDING" | "IN_PROGRESS" | "COMPLETED";
+  completedAt: string | null;
 }
 
 export interface CreateTaskRequest {

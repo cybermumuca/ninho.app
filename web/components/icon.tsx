@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { BookIcon, BriefcaseBusinessIcon, BriefcaseIcon, BrushCleaningIcon, CakeIcon, DumbbellIcon, GiftIcon, MusicIcon, StethoscopeIcon } from "lucide-react";
+import { BookIcon, BrainIcon, BriefcaseBusinessIcon, BriefcaseIcon, BrushCleaningIcon, CakeIcon, DollarSignIcon, DumbbellIcon, GiftIcon, HeartPulseIcon, MusicIcon, StethoscopeIcon } from "lucide-react";
 
 interface IconProps {
   icon: string;
@@ -28,6 +28,12 @@ export function Icon({ icon, className }: IconProps) {
       return <StethoscopeIcon className={cn("size-4.5", className)} />;
     case "gift":
       return <GiftIcon className={cn("size-4.5", className)} />;
+    case "heart-pulse":
+      return <HeartPulseIcon className={cn("size-4.5", className)} />;
+    case "dollar-sign":
+      return <DollarSignIcon className={cn("size-4.5", className)} />;
+    case "brain":
+      return <BrainIcon className={cn("size-4.5", className)} />;
     default:
       return null;
   }
