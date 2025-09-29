@@ -2,14 +2,13 @@
 
 import { Button } from "@/components/ui/button";
 import { ArchiveIcon, ListChecksIcon, ListFilterIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { usePathname } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 export function TasksLayoutHeader() {
   const router = useRouter();
   const pathname = usePathname();
-  const isSingle = pathname === "/tasks/single";
-  const isRecurrent = pathname === "/tasks/recurrent";
+  const isSingle = pathname.startsWith("/tasks/single");
+  const isRecurrent = pathname.startsWith("/tasks/recurrent");
   const rootPath = isSingle ? "/tasks/single" : isRecurrent ? "/tasks/recurrent" : "/tasks/single";
 
   function handleOpenListOptions() {
@@ -39,7 +38,7 @@ export function TasksLayoutHeader() {
           <ListFilterIcon className="size-5.5" />
         </Button>
         <Button
-          className="rounded-md p-2 -m-2 cursor-pointer"
+          className="rounded-md p-2 -m-2 cursor-pointer "
           variant="ghost"
           size="icon"
           onClick={handleOpenCompletedTasks}
