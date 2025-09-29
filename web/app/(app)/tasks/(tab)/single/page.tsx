@@ -7,6 +7,7 @@ import { useSimpleTaskListStore } from "./simple-task-list-store";
 import { ChevronDownIcon, ChevronRightIcon } from "lucide-react";
 import { Task } from "@/lib/types/task";
 import { TaskItem } from "./task-item";
+import { isTaskOverdue } from "../task-utils";
 
 export default function SingleTasksPage() {
   const { groupAndSortTasks } = useTask();
@@ -14,7 +15,7 @@ export default function SingleTasksPage() {
 
   return (
     <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 min-h-full container mx-auto">
-      {groupAndSortTasks(mockTasksList.filter(task => task.completedAt === null), groupBy, sortBy).map(([group, tasks]) => {
+      {groupAndSortTasks(mockTasksList.filter(task => task.completedAt === null && !isTaskOverdue(task)), groupBy, sortBy).map(([group, tasks]) => {
         const isCollapsed = collapsedGroups.has(group);
 
         return (

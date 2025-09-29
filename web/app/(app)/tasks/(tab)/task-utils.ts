@@ -1,5 +1,5 @@
 import { Task } from "@/lib/types/task";
-import { format, isToday, isTomorrow, isYesterday, parseISO } from "date-fns";
+import { format, isToday, isTomorrow, isYesterday, parseISO, isBefore, startOfDay } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { SortOption } from "./single/simple-task-list-store";
 
@@ -71,4 +71,22 @@ export function sortTasks(tasks: Task[], sortBy: SortOption): Task[] {
     default:
       return sortedTasks;
   }
+}
+
+/**
+ * Verifica se uma tarefa está vencida (arquivada).
+ * Uma tarefa é considerada arquivada quando:
+ * - Tem uma data de vencimento (dueDate)
+ * - A data de vencimento é anterior ao dia atual
+ * - Não está concluída (status !== 'COMPLETED')
+ */
+export function isTaskOverdue(task: Task): boolean {
+  if (!task.dueDate || task.status === 'COMPLETED') {
+    return false;
+  }
+
+  const dueDate = parseISO(task.dueDate);
+  const today = startOfDay(new Date());
+
+  return isBefore(dueDate, today);
 }

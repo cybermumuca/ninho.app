@@ -16,6 +16,7 @@ interface TaskItemProps {
   estimatedDuration: string | null; // hh:mm:ss
   status: "PENDING" | "IN_PROGRESS" | "COMPLETED";
   completedAt: string | null;
+  isArchived?: boolean;
 }
 
 export function TaskItem({
@@ -24,6 +25,7 @@ export function TaskItem({
   category: { color, icon },
   estimatedDuration,
   status,
+  isArchived = false,
 }: TaskItemProps) {
   const router = useRouter();
 
@@ -51,7 +53,10 @@ export function TaskItem({
   }
 
   return (
-    <div className={cn("flex items-center gap-3 p-4", status === "COMPLETED" && "opacity-60")} onClick={handleOpenOptions}>
+    <div className={cn("flex items-center gap-3 p-4", {
+      "opacity-60": status === "COMPLETED",
+      "border-l-2 border-red-500 bg-red-50/50 dark:bg-red-950/20": isArchived
+    })} onClick={handleOpenOptions}>
       <div className="flex items-center gap-3 min-w-0 flex-1">
         <IconWrapper color={color} className="border-1 rounded-full flex-shrink-0">
           <Icon icon={icon} className="size-4" />

@@ -110,5 +110,66 @@ export const mockTasksList: Task[] = [
     status: "PENDING",
     dueDate: null,
     completedAt: null
+  },
+  // Tarefas arquivadas (vencidas)
+  {
+    id: "task-6",
+    title: "Entregar relatório de vendas",
+    category: {
+      id: "2",
+      name: "Trabalho",
+      icon: "briefcase",
+      color: "blue"
+    },
+    date: getDateDaysAgo(5),
+    dueDate: getDateDaysAgo(3), // Venceu há 3 dias
+    estimatedDuration: "02:30:00",
+    notes: "Relatório mensal com análise de vendas do trimestre",
+    tags: [
+      { id: "2", name: "trabalho", color: "blue" },
+      { id: "7", name: "urgente", color: "red" }
+    ],
+    status: "PENDING",
+    completedAt: null
+  },
+  {
+    id: "task-7",
+    title: "Agendar consulta médica",
+    category: {
+      id: "2",
+      name: "Saúde",
+      icon: "heart-pulse",
+      color: "green"
+    },
+    date: getDateDaysAgo(7),
+    dueDate: getDateDaysAgo(2), // Venceu há 2 dias
+    estimatedDuration: "00:30:00",
+    notes: "Consulta de rotina com o clínico geral",
+    tags: [
+      { id: "4", name: "saúde", color: "red" },
+      { id: "1", name: "autocuidado", color: "purple" }
+    ],
+    status: "PENDING",
+    completedAt: null
+  },
+  {
+    id: "task-8",
+    title: "Organizar documentos fiscais",
+    category: {
+      id: "1",
+      name: "Finanças",
+      icon: "dollar-sign",
+      color: "amber"
+    },
+    date: getDateDaysAgo(10),
+    dueDate: getDateDaysAgo(7), // Venceu há 7 dias
+    estimatedDuration: "01:45:00",
+    notes: "Separar e arquivar documentos para declaração de imposto",
+    tags: [
+      { id: "5", name: "finanças", color: "yellow" },
+      { id: "8", name: "documentos", color: "gray" }
+    ],
+    status: "IN_PROGRESS",
+    completedAt: null
   }
 ];
