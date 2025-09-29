@@ -18,11 +18,11 @@ export default function CompletedSingleTasksPage() {
 
   if (completedTasks.length === 0) {
     return (
-      <main className="flex items-center justify-center min-h-full container mx-auto">
+      <main className="flex flex-1 items-center justify-center min-h-full container mx-auto">
         <div className="text-center space-y-2">
-          <p className="text-lg font-medium text-muted-foreground">Nenhuma tarefa concluída</p>
+          <p className="text-lg font-medium text-muted-foreground">Nenhuma tarefa simples concluída</p>
           <p className="text-sm text-muted-foreground">
-            As tarefas concluídas aparecerão aqui
+            As tarefas simples concluídas aparecerão aqui
           </p>
         </div>
       </main>
