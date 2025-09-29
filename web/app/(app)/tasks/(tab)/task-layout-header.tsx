@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { ArchiveIcon, ListChecksIcon, ListFilterIcon } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
 
@@ -10,6 +11,9 @@ export function TasksLayoutHeader() {
   const isSingle = pathname.startsWith("/tasks/single");
   const isRecurrent = pathname.startsWith("/tasks/recurrent");
   const rootPath = isSingle ? "/tasks/single" : isRecurrent ? "/tasks/recurrent" : "/tasks/single";
+  const isInListOptionsPage = pathname.endsWith("/menu");
+  const isInArchivedTasksPage = pathname.endsWith("/archived");
+  const isInCompletedTasksPage = pathname.endsWith("/completed");
 
   function handleOpenListOptions() {
     router.push(`${rootPath}/menu`);
@@ -30,7 +34,7 @@ export function TasksLayoutHeader() {
       </div>
       <div className="flex items-center gap-4">
         <Button
-          className="rounded-md p-2 -m-2 cursor-pointer"
+          className={cn("rounded-md p-2 -m-2 cursor-pointer", isInListOptionsPage && "cursor-not-allowed text-primary hover:bg-transparent hover:text-primary dark:hover:bg-transparent")}
           variant="ghost"
           size="icon"
           onClick={handleOpenListOptions}
@@ -38,7 +42,7 @@ export function TasksLayoutHeader() {
           <ListFilterIcon className="size-5.5" />
         </Button>
         <Button
-          className="rounded-md p-2 -m-2 cursor-pointer "
+          className={cn("rounded-md p-2 -m-2 cursor-pointer", isInCompletedTasksPage && "cursor-not-allowed pointer-events-none text-primary hover:bg-transparent hover:text-primary dark:hover:bg-transparent")}
           variant="ghost"
           size="icon"
           onClick={handleOpenCompletedTasks}
@@ -46,7 +50,7 @@ export function TasksLayoutHeader() {
           <ListChecksIcon className="size-5.5" />
         </Button>
         <Button
-          className="rounded-md p-2 -m-2 cursor-pointer"
+          className={cn("rounded-md p-2 -m-2 cursor-pointer", isInArchivedTasksPage && "cursor-not-allowed pointer-events-none text-primary hover:bg-transparent hover:text-primary dark:hover:bg-transparent")}
           variant="ghost"
           size="icon"
           onClick={handleOpenArchivedTasks}
