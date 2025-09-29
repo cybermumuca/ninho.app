@@ -7,6 +7,7 @@ import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/u
 import { mockTasksList } from "@/data/tasks";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
+import { isToday, parseISO } from "date-fns";
 import { AlarmClockIcon, CheckIcon, CircleDashedIcon, ClockIcon, MessageSquareMoreIcon, PencilIcon, PlayIcon, TargetIcon, TimerIcon, Trash2Icon, XIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -48,9 +49,20 @@ export function ResponsiveSingleTaskOptionsOverlay({ singleTaskId }: ResponsiveS
     return `${hours}h ${minutes}min`;
   }
 
+  function isDueDateToday() {
+    if (!task || !task.dueDate || task.status === 'COMPLETED') return false;
+    return isToday(parseISO(task.dueDate));
+  }
+
   function getStatusColor() {
     switch (task?.status) {
-      case "PENDING": return "text-gray-500";
+      case "PENDING": {
+        if (isDueDateToday()) {
+          return "text-red-600 dark:text-red-500";
+        }
+
+        return "text-gray-500";
+      };
       case "IN_PROGRESS": return "text-orange-600 dark:text-orange-500";
       case "COMPLETED": return "text-green-600 dark:text-green-500";
       default: return "text-gray-500";
@@ -100,7 +112,7 @@ export function ResponsiveSingleTaskOptionsOverlay({ singleTaskId }: ResponsiveS
                 {task?.status === "IN_PROGRESS" && <PlayIcon className={`size-3 ${getStatusColor()}`} />}
                 {task?.status === "COMPLETED" && <CheckIcon className={`size-3 ${getStatusColor()}`} />}
                 <span className={`text-xs ${getStatusColor()}`}>
-                  {task?.status === "PENDING" && "Pendente"}
+                  {task?.status === "PENDING" ? isDueDateToday() ? "Pendente (vence hoje)" : "Pendente" : null}
                   {task?.status === "IN_PROGRESS" && "Em andamento"}
                   {task?.status === "COMPLETED" && "Concluída"}
                 </span>

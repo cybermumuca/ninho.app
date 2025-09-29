@@ -111,6 +111,26 @@ export const mockTasksList: Task[] = [
     dueDate: null,
     completedAt: null
   },
+  {
+    id: "task-9",
+    title: "Entregar projeto urgente",
+    category: {
+      id: "2",
+      name: "Trabalho",
+      icon: "briefcase-1",
+      color: "blue"
+    },
+    date: getDateDaysAgo(2),
+    dueDate: getDateDaysAgo(0), // Vence hoje!
+    estimatedDuration: "03:00:00",
+    notes: "Projeto deve ser entregue até o final do dia",
+    tags: [
+      { id: "2", name: "trabalho", color: "blue" },
+      { id: "7", name: "urgente", color: "red" }
+    ],
+    status: "PENDING",
+    completedAt: null
+  },
   // Tarefas arquivadas (vencidas)
   {
     id: "task-6",
@@ -118,7 +138,7 @@ export const mockTasksList: Task[] = [
     category: {
       id: "2",
       name: "Trabalho",
-      icon: "briefcase",
+      icon: "briefcase-1",
       color: "blue"
     },
     date: getDateDaysAgo(5),

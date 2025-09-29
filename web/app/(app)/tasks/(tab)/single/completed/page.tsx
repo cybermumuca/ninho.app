@@ -39,7 +39,7 @@ export default function CompletedSingleTasksPage() {
             <Button
               variant="ghost"
               onClick={() => toggleGroup(group)}
-              className="flex items-center justify-between w-full py-3 rounded-none bg-muted/50 hover:bg-muted h-auto"
+              className="flex items-center justify-between w-full py-3 rounded-none bg-muted/50 hover:bg-muted h-auto cursor-pointer"
             >
               <div className="flex items-center gap-3">
                 <h2 className="font-medium text-base ms-2">{group}</h2>
