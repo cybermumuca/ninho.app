@@ -11,7 +11,7 @@ import { isTaskOverdue } from "../task-utils";
 
 export default function SingleTasksPage() {
   const { groupAndSortTasks } = useTask();
-  const { groupBy, sortBy, toggleGroup, collapsedGroups } = useSimpleTaskListStore();
+  const { groupBy, sortBy, toggleGroup, collapsedGroups, showTaskCount } = useSimpleTaskListStore();
 
   return (
     <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 min-h-full container mx-auto">
@@ -27,9 +27,11 @@ export default function SingleTasksPage() {
             >
               <div className="flex items-center gap-3">
                 <h2 className="font-medium text-base ms-2">{group}</h2>
-                <span className="text-sm text-muted-foreground">
-                  {tasks.length} {tasks.length === 1 ? 'tarefa' : 'tarefas'}
-                </span>
+                {showTaskCount && (
+                  <span className="text-sm text-muted-foreground">
+                    {tasks.length} {tasks.length === 1 ? 'tarefa' : 'tarefas'}
+                  </span>
+                )}
               </div>
 
               {isCollapsed ? (

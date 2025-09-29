@@ -11,7 +11,7 @@ import { isTaskOverdue } from "../../task-utils";
 
 export default function ArchivedSingleTasksPage() {
   const { groupAndSortTasks } = useTask();
-  const { groupBy, sortBy, toggleGroup, collapsedGroups } = useSimpleTaskListStore();
+  const { groupBy, sortBy, toggleGroup, collapsedGroups, showTaskCount } = useSimpleTaskListStore();
 
   const archivedTasks = mockTasksList.filter(task => isTaskOverdue(task));
 
@@ -42,9 +42,11 @@ export default function ArchivedSingleTasksPage() {
             >
               <div className="flex items-center gap-3 min-w-0 flex-1">
                 <h2 className="font-medium text-base ms-2 truncate">{group}</h2>
-                <span className="text-sm text-muted-foreground flex-shrink-0">
-                  {tasks.length} {tasks.length === 1 ? 'tarefa vencida' : 'tarefas vencidas'}
-                </span>
+                {showTaskCount && (
+                  <span className="text-sm text-muted-foreground flex-shrink-0">
+                    {tasks.length} {tasks.length === 1 ? 'tarefa vencida' : 'tarefas vencidas'}
+                  </span>
+                )}
               </div>
 
               {isCollapsed ? (

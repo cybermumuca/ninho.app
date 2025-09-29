@@ -6,6 +6,7 @@ import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } f
 import { Label } from "@/components/ui/label";
 import { Select, SelectItem, SelectContent, SelectTrigger } from "@/components/ui/select";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Switch } from "@/components/ui/switch";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { SelectValue } from "@radix-ui/react-select";
 import { ArrowDownAZIcon, CalendarArrowDownIcon, CircleXIcon, ClockIcon } from "lucide-react";
@@ -19,7 +20,9 @@ export function ResponsiveSingleTasksMenuOverlay() {
     setSortBy,
     resetCollapsedGroups,
     dateRange,
-    setDateRange
+    setDateRange,
+    showTaskCount,
+    setShowTaskCount
   } = useSimpleTaskListStore();
   const router = useRouter();
   const isMobile = useIsMobile();
@@ -53,6 +56,16 @@ export function ResponsiveSingleTasksMenuOverlay() {
               <SelectItem value="ALL">Não limitar</SelectItem>
             </SelectContent>
           </Select>
+        </div>
+        <div className="flex items-center justify-between">
+          <Label className="text-sm font-normal" htmlFor="show-task-count">
+            Exibir contagem de tarefas nos grupos
+          </Label>
+          <Switch
+            id="show-task-count"
+            checked={showTaskCount}
+            onCheckedChange={setShowTaskCount}
+          />
         </div>
       </div>
       <div className="space-y-3">

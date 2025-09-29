@@ -10,7 +10,7 @@ import { TaskItem } from "../task-item";
 
 export default function CompletedSingleTasksPage() {
   const { groupAndSortTasks } = useTask();
-  const { groupBy, sortBy, toggleGroup, collapsedGroups } = useSimpleTaskListStore();
+  const { groupBy, sortBy, toggleGroup, collapsedGroups, showTaskCount } = useSimpleTaskListStore();
 
   const completedTasks = mockTasksList.filter(task =>
     task.status === "COMPLETED" && task.completedAt !== null
@@ -43,9 +43,11 @@ export default function CompletedSingleTasksPage() {
             >
               <div className="flex items-center gap-3">
                 <h2 className="font-medium text-base ms-2">{group}</h2>
-                <span className="text-sm text-muted-foreground">
-                  {tasks.length} {tasks.length === 1 ? 'tarefa concluída' : 'tarefas concluídas'}
-                </span>
+                {showTaskCount && (
+                  <span className="text-sm text-muted-foreground">
+                    {tasks.length} {tasks.length === 1 ? 'tarefa concluída' : 'tarefas concluídas'}
+                  </span>
+                )}
               </div>
 
               {isCollapsed ? (

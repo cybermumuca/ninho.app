@@ -5,11 +5,13 @@ export type SortOption = "alphabet" | "estimatedDuration";
 export type DateRangeOption = "DAY" | "WEEK" | "MONTH" | "ALL";
 
 interface SimpleTaskListStore {
+  showTaskCount: boolean;
   groupBy: GroupOption;
   sortBy: SortOption;
   dateRange: DateRangeOption;
   collapsedGroups: Set<string>;
 
+  setShowTaskCount: (show: boolean) => void;
   setGroupBy: (group: GroupOption) => void;
   setSortBy: (sort: SortOption) => void;
   setDateRange: (range: DateRangeOption) => void;
@@ -18,10 +20,13 @@ interface SimpleTaskListStore {
 }
 
 export const useSimpleTaskListStore = create<SimpleTaskListStore>((set) => ({
+  showTaskCount: true,
   groupBy: "date",
   sortBy: "estimatedDuration",
   dateRange: "WEEK",
   collapsedGroups: new Set(),
+
+  setShowTaskCount: (show) => set({ showTaskCount: show }),
 
   setGroupBy: (group) => set({ groupBy: group }),
 
