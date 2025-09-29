@@ -84,7 +84,7 @@ export function ResponsiveSingleTaskOptionsOverlay({ singleTaskId }: ResponsiveS
   }
 
   function handleOpenEditPage() {
-    setPendingNavigation(`/tasks/single/${singleTaskId}/edit`);
+    setPendingNavigation(`/tasks/single/${singleTaskId}`);
     setOpen(false);
   }
 
