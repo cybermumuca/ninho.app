@@ -1,10 +1,7 @@
 package app.ninho.api.agenda.service;
 
 import app.ninho.api.agenda.domain.Task;
-import app.ninho.api.agenda.dto.io.CreateTaskRequest;
-import app.ninho.api.agenda.dto.io.DeleteTaskRequest;
-import app.ninho.api.agenda.dto.io.GetTaskRequest;
-import app.ninho.api.agenda.dto.io.GetTaskResponse;
+import app.ninho.api.agenda.dto.io.*;
 import app.ninho.api.agenda.repository.CategoryRepository;
 import app.ninho.api.agenda.repository.TagRepository;
 import app.ninho.api.agenda.repository.TaskRepository;
@@ -16,8 +13,10 @@ import app.ninho.api.recurrence.repository.FrequencyRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 
 import static app.ninho.api.agenda.domain.ActivityType.TASK;
 import static app.ninho.api.recurrence.domain.type.FrequencyType.SINGLE;
@@ -31,7 +30,13 @@ public class TaskService {
     private final FrequencyRepository frequencyRepository;
     private final TaskRepository taskRepository;
 
-    public TaskService(UserRepository userRepository, CategoryRepository categoryRepository, TagRepository tagRepository, FrequencyRepository frequencyRepository, TaskRepository taskRepository) {
+    public TaskService(
+        UserRepository userRepository,
+        CategoryRepository categoryRepository,
+        TagRepository tagRepository,
+        FrequencyRepository frequencyRepository,
+        TaskRepository taskRepository
+    ) {
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
         this.tagRepository = tagRepository;
@@ -157,5 +162,82 @@ public class TaskService {
         frequencyRepository.deleteAllById(tasksToDelete);
 
         taskRepository.delete(task);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ListTasksResponse> listTasks(ListTasksRequest request) {
+        var principal = userRepository.findById(request.principalId())
+            .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        var principalHasPermission = principal.checkScope(Scope.Values.TASK_LIST.name());
+
+        if (!principalHasPermission) {
+            throw new IllegalArgumentException("User does not have permission to list tasks");
+        }
+
+        LocalDate startDate;
+        LocalDate endDate;
+
+        LocalDate today = LocalDate.now();
+
+        switch (request.periodLimit()) {
+            case today -> {
+                startDate = today;
+                endDate = today;
+            }
+            case this_week -> {
+                startDate = today.with(java.time.DayOfWeek.MONDAY);
+                endDate = startDate.plusDays(6);
+            }
+            case this_month -> {
+                startDate = today.withDayOfMonth(1);
+                endDate = startDate.plusMonths(1).minusDays(1);
+            }
+            case none -> {
+                startDate = null;
+                endDate = null;
+            }
+            case null, default -> throw new IllegalArgumentException("Invalid period limit");
+        }
+
+        var tasks = taskRepository.findAllByOwnerAndStartDateAndEndDateAndTodayWithCategoryAndFrequency(
+            request.principalId(),
+            startDate,
+            endDate,
+            today
+        );
+
+        return tasks.stream().map(task -> {
+            var track = task.getTracks().stream().findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Task track not found"));
+
+            LocalDate date = track.getStartDate();
+
+            if (date.isBefore(startDate)) {
+                date = today;
+            }
+
+            // TODO: refactor when more types are implemented (eg. IN_PROGRESS)
+            ListTasksResponse.Status status = ListTasksResponse.Status.PENDING;
+
+            if (task.getCompletedAt() != null) {
+                status = ListTasksResponse.Status.COMPLETED;
+            }
+
+            return new ListTasksResponse(
+                task.getId(),
+                task.getTitle(),
+                new ListTasksResponse.Category(
+                    task.getCategory().getId(),
+                    task.getCategory().getName(),
+                    task.getCategory().getIcon(),
+                    task.getCategory().getColor()
+                ),
+                date,
+                track.getEndDate(),
+                task.getEstimatedDuration(),
+                status
+            );
+        }).toList();
     }
 }

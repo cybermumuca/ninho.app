@@ -1,10 +1,8 @@
 package app.ninho.api.agenda.controller;
 
 import app.ninho.api.agenda.dto.httpio.CreateTaskHttpRequest;
-import app.ninho.api.agenda.dto.io.CreateTaskRequest;
-import app.ninho.api.agenda.dto.io.DeleteTaskRequest;
-import app.ninho.api.agenda.dto.io.GetTaskRequest;
-import app.ninho.api.agenda.dto.io.GetTaskResponse;
+import app.ninho.api.agenda.dto.httpio.PeriodLimit;
+import app.ninho.api.agenda.dto.io.*;
 import app.ninho.api.agenda.service.TaskService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -13,6 +11,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class TaskController {
@@ -52,6 +52,18 @@ public class TaskController {
         @AuthenticationPrincipal Jwt jwt
     ) {
         var response = taskService.getTask(new GetTaskRequest(taskId, jwt.getSubject()));
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("/v1/tasks")
+    @PreAuthorize("hasAuthority('task:list')")
+    public ResponseEntity<List<ListTasksResponse>> listTasks(
+        @AuthenticationPrincipal Jwt jwt,
+        @RequestParam(name = "periodLimit", defaultValue = "none") PeriodLimit periodLimit
+    ) {
+        var request = new ListTasksRequest(periodLimit, jwt.getSubject());
+        var response = taskService.listTasks(request);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
