@@ -45,4 +45,20 @@ public interface TaskRepository extends JpaRepository<Task, String> {
         @Param("endDate") LocalDate endDate,
         @Param("today") LocalDate today
     );
+
+    @Query("""
+        SELECT DISTINCT t FROM Task t
+        JOIN FETCH t.category
+        LEFT JOIN FETCH t.tracks tracks
+        WHERE t.owner.id = :ownerId
+        AND tracks.type = 'SINGLE'
+        AND (:startDate IS NULL OR tracks.startDate = :startDate)
+        AND (:endDate IS NULL OR tracks.endDate = :endDate)
+        AND t.completedAt IS NOT NULL
+    """)
+    List<Task> findAllCompletedByOwnerAndStartDateAndEndDateWithCategoryAndFrequency(
+        @Param("ownerId") String ownerId,
+        @Param("startDate") LocalDate startDate,
+        @Param("endDate") LocalDate endDate
+    );
 }

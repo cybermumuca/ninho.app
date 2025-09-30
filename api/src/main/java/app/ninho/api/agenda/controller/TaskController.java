@@ -68,6 +68,18 @@ public class TaskController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @GetMapping("/v1/tasks/completed")
+    @PreAuthorize("hasAuthority('task:list')")
+    public ResponseEntity<List<ListCompletedTasksResponse>> listCompletedTasks(
+        @AuthenticationPrincipal Jwt jwt,
+        @RequestParam(name = "periodLimit", defaultValue = "none") PeriodLimit periodLimit
+    ) {
+        var request = new ListCompletedTasksRequest(periodLimit, jwt.getSubject());
+        var response = taskService.listCompletedTasks(request);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     @DeleteMapping("/v1/tasks/{id}")
     @PreAuthorize("hasAuthority('task:delete')")
     public ResponseEntity<Void> deleteTask(

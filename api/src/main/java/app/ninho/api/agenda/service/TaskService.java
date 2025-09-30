@@ -20,6 +20,7 @@ import java.util.List;
 
 import static app.ninho.api.agenda.domain.ActivityType.TASK;
 import static app.ninho.api.recurrence.domain.type.FrequencyType.SINGLE;
+import static java.time.DayOfWeek.MONDAY;
 
 @Service
 public class TaskService {
@@ -186,7 +187,7 @@ public class TaskService {
                 endDate = today;
             }
             case this_week -> {
-                startDate = today.with(java.time.DayOfWeek.MONDAY);
+                startDate = today.with(MONDAY);
                 endDate = startDate.plusDays(6);
             }
             case this_month -> {
@@ -237,6 +238,70 @@ public class TaskService {
                 track.getEndDate(),
                 task.getEstimatedDuration(),
                 status
+            );
+        }).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<ListCompletedTasksResponse> listCompletedTasks(ListCompletedTasksRequest request) {
+        var principal = userRepository.findById(request.principalId())
+            .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        var principalHasPermission = principal.checkScope(Scope.Values.TASK_LIST.name());
+
+        if (!principalHasPermission) {
+            throw new IllegalArgumentException("User does not have permission to list tasks");
+        }
+
+        LocalDate startDate;
+        LocalDate endDate;
+
+        LocalDate today = LocalDate.now();
+
+        switch (request.periodLimit()) {
+            case today -> {
+                startDate = today;
+                endDate = today;
+            }
+            case this_week -> {
+                startDate = today.with(MONDAY);
+                endDate = startDate.plusDays(6);
+            }
+            case this_month -> {
+                startDate = today.withDayOfMonth(1);
+                endDate = startDate.plusMonths(1).minusDays(1);
+            }
+            case none -> {
+                startDate = null;
+                endDate = null;
+            }
+            case null, default -> throw new IllegalArgumentException("Invalid period limit");
+        }
+
+        var tasks = taskRepository.findAllCompletedByOwnerAndStartDateAndEndDateWithCategoryAndFrequency(
+            request.principalId(),
+            startDate,
+            endDate
+        );
+
+        return tasks.stream().map(task -> {
+            var track = task.getTracks().stream().findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Task track not found"));
+
+            return new ListCompletedTasksResponse(
+                task.getId(),
+                task.getTitle(),
+                new ListCompletedTasksResponse.Category(
+                    task.getCategory().getId(),
+                    task.getCategory().getName(),
+                    task.getCategory().getIcon(),
+                    task.getCategory().getColor()
+                ),
+                track.getStartDate(),
+                track.getEndDate(),
+                task.getEstimatedDuration(),
+                ListCompletedTasksResponse.Status.COMPLETED,
+                task.getCompletedAt()
             );
         }).toList();
     }
