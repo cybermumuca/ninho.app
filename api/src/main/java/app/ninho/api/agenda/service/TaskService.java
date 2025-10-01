@@ -133,7 +133,8 @@ public class TaskService {
                 tag.getName(),
                 tag.getColor()
             )).toList(),
-            task.getNotes()
+            task.getNotes(),
+            task.getCompletedAt() == null ? GetTaskResponse.Status.PENDING : GetTaskResponse.Status.COMPLETED
         );
     }
 

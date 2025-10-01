@@ -15,7 +15,8 @@ public record GetTaskResponse(
     LocalTime actualDuration,
     Instant completedAt,
     List<Tag> tags,
-    String notes
+    String notes,
+    Status status
 ) {
     public record Category(
         String id,
@@ -29,4 +30,10 @@ public record GetTaskResponse(
         String name,
         String color
     ) {}
+
+    public enum Status {
+        PENDING,
+        IN_PROGRESS,
+        COMPLETED,
+    }
 }
