@@ -61,4 +61,18 @@ public interface TaskRepository extends JpaRepository<Task, String> {
         @Param("startDate") LocalDate startDate,
         @Param("endDate") LocalDate endDate
     );
+
+    @Query("""
+        SELECT DISTINCT t FROM Task t
+        JOIN FETCH t.category
+        LEFT JOIN FETCH t.tracks tracks
+        WHERE t.owner.id = :ownerId
+        AND tracks.type = 'SINGLE'
+        AND (tracks.endDate IS NOT NULL AND tracks.endDate < :today)
+        AND t.completedAt IS NULL
+    """)
+    List<Task> findAllOverdueByOwnerWithCategoryAndFrequency(
+        @Param("ownerId") String ownerId,
+        @Param("today") LocalDate today
+    );
 }

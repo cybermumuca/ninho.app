@@ -80,6 +80,17 @@ public class TaskController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @GetMapping("/v1/tasks/overdue")
+    @PreAuthorize("hasAuthority('task:list')")
+    public ResponseEntity<List<ListOverdueTasksResponse>> listOverdueTasks(
+        @AuthenticationPrincipal Jwt jwt
+    ) {
+        var request = new ListOverdueTasksRequest(jwt.getSubject());
+        var response = taskService.listOverdueTasks(request);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     @DeleteMapping("/v1/tasks/{id}")
     @PreAuthorize("hasAuthority('task:delete')")
     public ResponseEntity<Void> deleteTask(

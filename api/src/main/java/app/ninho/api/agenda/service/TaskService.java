@@ -305,4 +305,43 @@ public class TaskService {
             );
         }).toList();
     }
+
+    @Transactional(readOnly = true)
+    public List<ListOverdueTasksResponse> listOverdueTasks(ListOverdueTasksRequest request) {
+        var principal = userRepository.findById(request.principalId())
+            .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        var principalHasPermission = principal.checkScope(Scope.Values.TASK_LIST.name());
+
+        if (!principalHasPermission) {
+            throw new IllegalArgumentException("User does not have permission to list tasks");
+        }
+
+        var today = LocalDate.now();
+
+        var tasks = taskRepository.findAllOverdueByOwnerWithCategoryAndFrequency(
+            request.principalId(),
+            today
+        );
+
+        return tasks.stream().map(task -> {
+            var track = task.getTracks().stream().findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Task track not found"));
+
+            return new ListOverdueTasksResponse(
+                task.getId(),
+                task.getTitle(),
+                new ListOverdueTasksResponse.Category(
+                    task.getCategory().getId(),
+                    task.getCategory().getName(),
+                    task.getCategory().getIcon(),
+                    task.getCategory().getColor()
+                ),
+                track.getStartDate(),
+                track.getEndDate(),
+                task.getEstimatedDuration(),
+                ListOverdueTasksResponse.Status.PENDING
+            );
+        }).toList();
+    }
 }
