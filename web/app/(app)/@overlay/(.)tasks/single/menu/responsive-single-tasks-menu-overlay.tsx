@@ -1,6 +1,6 @@
 "use client";
 
-import { useSimpleTaskListStore } from "@/app/(app)/tasks/(tab)/single/simple-task-list-store";
+import { useSimpleTaskListStore } from "@/app/(app)/(mobile-navigation)/tasks/(tab)/single/simple-task-list-store";
 import { Button } from "@/components/ui/button";
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { Label } from "@/components/ui/label";

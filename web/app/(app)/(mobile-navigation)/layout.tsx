@@ -20,7 +20,7 @@ export default function MobileNavigationLayout({
       {isMobile && fabAction && (
         <FloatingActionButton
           position="bottom-right"
-          className="mb-20"
+          className="mb-20 rounded-lg"
           asChild
         >
           <Link href={fabAction.href} aria-label={fabAction.label}>

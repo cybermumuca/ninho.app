@@ -12,6 +12,23 @@ function getDateDaysAhead(daysAhead: number): string {
   return date.toISOString().split('T')[0];
 }
 
+export const mockRecurrentTasksList = [
+  {
+    id: "recurrent-task-1",
+    title: "Revisar metas semanais",
+    category: {
+      id: "3",
+      name: "Produtividade",
+      icon: "check-square",
+      color: "teal"
+    },
+    frequency: {
+      type: "EVERY_X_DAYS",
+      interval: 7
+    },
+  }
+]
+
 export const mockTasksList: Task[] = [
   {
     id: "task-1",

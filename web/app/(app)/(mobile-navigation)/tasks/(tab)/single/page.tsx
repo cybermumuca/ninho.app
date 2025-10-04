@@ -14,7 +14,7 @@ export default function SingleTasksPage() {
   const { groupBy, sortBy, toggleGroup, collapsedGroups, showTaskCount } = useSimpleTaskListStore();
 
   return (
-    <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 min-h-full container mx-auto">
+    <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 min-h-full container mx-auto mb-20">
       {groupAndSortTasks(mockTasksList.filter(task => task.completedAt === null && !isTaskOverdue(task)), groupBy, sortBy).map(([group, tasks]) => {
         const isCollapsed = collapsedGroups.has(group);
 
